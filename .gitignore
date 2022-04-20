@@ -3,4 +3,4 @@ temp
 node_modules
 temp
 dist
-.cache
+.parcel-cache

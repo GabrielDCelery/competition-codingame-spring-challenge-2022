@@ -7,7 +7,7 @@
     "bundle:prepare": "rm -rf temp",
     "bundle:ts": "./node_modules/.bin/tsc --outDir ./temp/src",
     "bundle:node_modules": "cp package* ./temp && npm install --prefix ./temp --only=prod",
-    "bundle:parcel": "./node_modules/.bin/parcel build ./temp/src/index.js",
+    "bundle:parcel": "./node_modules/.bin/parcel build",
     "bundle:cleanup": "rm -rf temp",
     "test": "./node_modules/.bin/mocha -r ts-node/register tests/*.test.ts",
     "build": "npm run bundle:prepare && npm run bundle:ts && npm run bundle:parcel && npm run bundle:cleanup",
@@ -38,13 +38,19 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-unicorn": "^42.0.0",
     "mocha": "^9.2.2",
-    "parcel-bundler": "^1.12.5",
+    "parcel": "^2.4.1",
     "prettier": "^2.1.2",
     "ts-node": "^10.2.0",
     "typescript": "^4.0.2"
   },
   "engines": {
-    "node": "^14",
-    "npm": "^6"
+    "node": "^16",
+    "npm": "^8"
+  },
+  "source": "./temp/src/index.js",
+  "targets": {
+    "default": {
+      "distDir": "./dist"
+    }
   }
 }

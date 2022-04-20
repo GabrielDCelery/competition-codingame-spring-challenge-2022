@@ -3,4 +3,6 @@ declare const readline: any;
 
 const readNextLine = (): string => readline();
 
-while (true) {}
+while (true) {
+    console.log('test');
+}
