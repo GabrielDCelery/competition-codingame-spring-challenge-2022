@@ -1,0 +1,50 @@
+{
+  "name": "competition-codingame-spring-challenge-2022",
+  "version": "1.0.0",
+  "description": "CodinGame Spring Challenge 2022",
+  "main": "index.js",
+  "scripts": {
+    "bundle:prepare": "rm -rf temp",
+    "bundle:ts": "./node_modules/.bin/tsc --outDir ./temp/src",
+    "bundle:node_modules": "cp package* ./temp && npm install --prefix ./temp --only=prod",
+    "bundle:parcel": "./node_modules/.bin/parcel build ./temp/src/index.js",
+    "bundle:cleanup": "rm -rf temp",
+    "test": "./node_modules/.bin/mocha -r ts-node/register tests/*.test.ts",
+    "build": "npm run bundle:prepare && npm run bundle:ts && npm run bundle:parcel && npm run bundle:cleanup",
+    "build:full": "rm -Rf node_modules && rm -Rf package-lock.json && npm install && npm run bundle:prepare && npm run bundle:ts && npm run bundle:parcel && npm run bundle:cleanup"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GabrielDCelery/competition-codingame-spring-challenge-2022.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GabrielDCelery/competition-codingame-spring-challenge-2022/issues"
+  },
+  "homepage": "https://github.com/GabrielDCelery/competition-codingame-spring-challenge-2022#readme",
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "^14.14.31",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
+    "chai": "^4.2.0",
+    "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-unicorn": "^42.0.0",
+    "mocha": "^9.2.2",
+    "parcel-bundler": "^1.12.5",
+    "prettier": "^2.1.2",
+    "ts-node": "^10.2.0",
+    "typescript": "^4.0.2"
+  },
+  "engines": {
+    "node": "^14",
+    "npm": "^6"
+  }
+}
