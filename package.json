@@ -8,7 +8,7 @@
     "bundle:ts": "./node_modules/.bin/tsc --outDir ./temp/src",
     "bundle:node_modules": "cp package* ./temp && npm install --prefix ./temp --only=prod",
     "bundle:parcel": "./node_modules/.bin/parcel build",
-    "bundle:cleanup": "rm -rf temp",
+    "bundle:cleanup": "rm -rf temp && rm -Rf index.js && rm -Rf index.js.map",
     "test": "./node_modules/.bin/mocha -r ts-node/register tests/*.test.ts",
     "build": "npm run bundle:prepare && npm run bundle:ts && npm run bundle:parcel && npm run bundle:cleanup",
     "build:full": "rm -Rf node_modules && rm -Rf package-lock.json && npm install && npm run bundle:prepare && npm run bundle:ts && npm run bundle:parcel && npm run bundle:cleanup"

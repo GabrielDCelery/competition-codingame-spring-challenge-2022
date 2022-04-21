@@ -16,8 +16,7 @@ module.exports = {
         sourceType: 'module',
     },
     plugins: ['@typescript-eslint', 'prettier', 'unicorn', 'promise', 'import'],
-    rules: {
-    },
+    rules: {},
     settings: {
         'import/parsers': {
             '@typescript-eslint/parser': ['.ts', '.tsx'],
@@ -26,4 +25,10 @@ module.exports = {
             typescript: {},
         },
     },
+    'prettier/prettier': [
+        'error',
+        {
+            endOfLine: 'auto',
+        },
+    ],
 };
