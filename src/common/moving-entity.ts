@@ -49,22 +49,18 @@ export const pursuitTargetEntityVelocity = ({
     const targetHeading = vector2DNormalize({ v: targetEntity.velocity });
     const myHeading = vector2DNormalize({ v: sourceEntity.velocity });
 
-    const sourceMaxSpeed = sourceEntity.maxSpeed;
-
     if (
         vector2DDot({ v1: toTarget, v2: myHeading }) > 0 &&
         vector2DDot({ v1: myHeading, v2: targetHeading }) < -0.95 // relative heading
     ) {
         return moveToTargetPositionVelocity({
             sourcePos: sourceEntity.position,
-            sourceMaxSpeed,
+            sourceMaxSpeed: sourceEntity.maxSpeed,
             targetPos: targetEntity.position,
         });
     }
 
-    const targetMaxSpeed = targetEntity.maxSpeed;
-
-    const lookAheadTime = vector2DLength({ v: toTarget }) / (sourceMaxSpeed + targetMaxSpeed);
+    const lookAheadTime = vector2DLength({ v: toTarget }) / (sourceEntity.maxSpeed + targetEntity.maxSpeed);
 
     const expectedTargetPosition = vector2DAdd({
         v1: targetEntity.position,
@@ -73,7 +69,7 @@ export const pursuitTargetEntityVelocity = ({
 
     return moveToTargetPositionVelocity({
         sourcePos: sourceEntity.position,
-        sourceMaxSpeed,
+        sourceMaxSpeed: sourceEntity.maxSpeed,
         targetPos: expectedTargetPosition,
     });
 };
