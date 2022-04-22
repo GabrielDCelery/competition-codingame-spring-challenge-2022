@@ -1,4 +1,12 @@
-import { GameState, PlayerID } from './game-state';
+import {
+    createEmptyGameState,
+    setBaseForPlayer,
+    setManaForPlayer,
+    addEntity,
+    getMonstersIDs,
+    GameState,
+    PlayerID,
+} from './game-state';
 import { Entity, EntityThreatFor, EntityType } from './entity';
 import { HERO_MAX_SPEED, MAP_HEIGHT, MAP_WIDTH, MONSTER_MAX_SPEED } from './config';
 import { pursuitTargetEntityNextPosition } from './common';
@@ -14,35 +22,40 @@ const [baseX, baseY] = readNextLine()
 
 const heroesPerPlayer = Number.parseInt(readline()); // Always 3
 
+const gameState: GameState = createEmptyGameState();
+
 // game loop
 while (true) {
-    const gameState: GameState = new GameState();
-
     const [myBaseHealth, myMana] = readNextLine()
         .split(' ')
         .map((input) => Number.parseInt(input));
 
-    gameState.setBaseForPlayer({
+    setBaseForPlayer({
+        gameState,
         playerID: PlayerID.ME,
         baseHealth: myBaseHealth,
         baseCoordinates: { x: baseX, y: baseY },
     });
 
-    gameState.setManaForPlayer({ playerID: PlayerID.ME, mana: myMana });
+    setManaForPlayer({ gameState, playerID: PlayerID.ME, mana: myMana });
 
     const [opponentBaseHealth, opponentMana] = readNextLine()
         .split(' ')
         .map((input) => Number.parseInt(input));
 
-    gameState.setBaseForPlayer({
+    setBaseForPlayer({
+        gameState,
         playerID: PlayerID.OPPONENT,
         baseHealth: opponentBaseHealth,
         baseCoordinates: { x: baseX === 0 ? MAP_WIDTH : 0, y: baseY === 0 ? MAP_HEIGHT : 0 },
     });
 
-    gameState.setManaForPlayer({ playerID: PlayerID.OPPONENT, mana: opponentMana });
+    setManaForPlayer({ gameState, playerID: PlayerID.OPPONENT, mana: opponentMana });
 
     const entityCount = Number.parseInt(readline()); // Amount of heros and monsters you can see
+
+    gameState.players[PlayerID.ME].heroes = [];
+    gameState.players[PlayerID.OPPONENT].heroes = [];
 
     for (let index = 0; index < entityCount; index++) {
         const [id, type, x, y, shieldLife, isControlled, health, vx, vy, nearBase, threatFor] = readNextLine()
@@ -77,7 +90,7 @@ while (true) {
             })(),
         };
 
-        gameState.addEntity({ entity });
+        addEntity({ gameState, entity });
     }
 
     const chosenMonster: { [index: number]: true } = {};
@@ -85,8 +98,8 @@ while (true) {
     const heroTargets: { [index: number]: number } = {};
 
     gameState.players[PlayerID.ME].heroes.forEach((myHeroID) => {
-        gameState.monsters.forEach((monsterID) => {
-            const monster = gameState.entitiesMap[monsterID];
+        getMonstersIDs({ gameState }).forEach((monsterID) => {
+            const monster = gameState.entityHistoryMap[monsterID];
             if (
                 monster.threatFor === EntityThreatFor.MY_BASE &&
                 heroTargets[myHeroID] === undefined &&
@@ -99,15 +112,17 @@ while (true) {
     });
 
     const commands = gameState.players[PlayerID.ME].heroes.map((myHeroID) => {
-        const myHero = gameState.entitiesMap[myHeroID];
+        const myHero = gameState.entityHistoryMap[myHeroID];
         if (heroTargets[myHeroID] === undefined) {
             return 'WAIT';
         }
-        const monster = gameState.entitiesMap[heroTargets[myHeroID]];
+        const monster = gameState.entityHistoryMap[heroTargets[myHeroID]];
+
         const taretVelocity = pursuitTargetEntityNextPosition({
             sourceEntity: myHero,
             targetEntity: monster,
         });
+
         return `MOVE ${Math.round(taretVelocity.x)} ${Math.round(taretVelocity.y)}`;
     });
 
