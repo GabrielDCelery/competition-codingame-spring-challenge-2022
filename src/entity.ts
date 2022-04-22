@@ -1,4 +1,4 @@
-import { MovingObject } from './common';
+import { Vector2D } from './common';
 
 export enum EntityType {
     MONSTER = 0,
@@ -21,7 +21,7 @@ export enum EntityNearBase {
     TARGETING_BASE = 1,
 }
 
-export class Entity {
+export type Entity = {
     id: number;
     type: number;
     shieldLife: number;
@@ -29,59 +29,6 @@ export class Entity {
     health: number;
     nearBase: number;
     threatFor: number;
-    movingObject: MovingObject;
-
-    constructor({
-        id,
-        type,
-        x,
-        y,
-        shieldLife,
-        isControlled,
-        health,
-        vx,
-        vy,
-        nearBase,
-        threatFor,
-    }: {
-        id: number;
-        type: number;
-        x: number;
-        y: number;
-        shieldLife: number;
-        isControlled: number;
-        health: number;
-        vx: number;
-        vy: number;
-        nearBase: number;
-        threatFor: number;
-    }) {
-        this.id = id;
-        this.type = type;
-        this.shieldLife = shieldLife;
-        this.isControlled = isControlled;
-        this.health = health;
-        this.nearBase = nearBase;
-        this.threatFor = threatFor;
-        this.movingObject = MovingObject.Instance({
-            position: { x, y },
-            velocity: { x: vx, y: vy },
-            maxSpeed: (() => {
-                switch (type) {
-                    case EntityType.MY_HERO: {
-                        return 800;
-                    }
-                    case EntityType.OPPONENT_HERO: {
-                        return 800;
-                    }
-                    case EntityType.MONSTER: {
-                        return 400;
-                    }
-                    default: {
-                        throw new Error(`Unhandled entity type: ${type}`);
-                    }
-                }
-            })(),
-        });
-    }
-}
+    position: Vector2D;
+    velocity: Vector2D;
+};
