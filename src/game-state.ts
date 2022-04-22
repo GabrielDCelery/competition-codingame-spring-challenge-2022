@@ -1,4 +1,5 @@
-import { Vector2D } from './common';
+import { getEntityExpectedPosition, Vector2D } from './common';
+import { isMonsterWithinBase } from './conditions';
 import { Entity, EntityType } from './entity';
 
 export enum PlayerID {
@@ -11,17 +12,15 @@ export type GameState = {
         [PlayerID.ME]: {
             baseHealth: number;
             mana: number;
-            heroes: number[];
             baseCoordinates: Vector2D;
         };
         [PlayerID.OPPONENT]: {
             baseHealth: number;
             mana: number;
-            heroes: number[];
             baseCoordinates: Vector2D;
         };
     };
-    entityHistoryMap: { [index: number]: Entity };
+    entityMap: { [index: number]: Entity };
 };
 
 export const createEmptyGameState = (): GameState => {
@@ -30,17 +29,15 @@ export const createEmptyGameState = (): GameState => {
             [PlayerID.ME]: {
                 baseHealth: 0,
                 mana: 0,
-                heroes: [],
                 baseCoordinates: { x: 0, y: 0 },
             },
             [PlayerID.OPPONENT]: {
                 baseHealth: 0,
                 mana: 0,
-                heroes: [],
                 baseCoordinates: { x: 0, y: 0 },
             },
         },
-        entityHistoryMap: {},
+        entityMap: {},
     };
 };
 
@@ -77,31 +74,13 @@ export const setManaForPlayer = ({
 
 export const addEntity = ({ gameState, entity }: { gameState: GameState; entity: Entity }) => {
     const gameStateCopy = gameState;
-    gameStateCopy.entityHistoryMap[entity.id] = entity;
-
-    (() => {
-        switch (entity.type) {
-            case EntityType.MY_HERO: {
-                return gameState.players[PlayerID.ME].heroes.push(entity.id);
-            }
-            case EntityType.OPPONENT_HERO: {
-                return gameState.players[PlayerID.OPPONENT].heroes.push(entity.id);
-            }
-            case EntityType.MONSTER: {
-                return;
-            }
-            default: {
-                throw new Error(`Unhandled entity type -> ${entity.type}`);
-            }
-        }
-    })();
-
+    gameStateCopy.entityMap[entity.id] = entity;
     return gameStateCopy;
 };
 
 export const getMonstersIDs = ({ gameState }: { gameState: GameState }): number[] => {
     const monsterIDs: number[] = [];
-    Object.values(gameState.entityHistoryMap).forEach((entity) => {
+    Object.values(gameState.entityMap).forEach((entity) => {
         if (entity.type !== EntityType.MONSTER) {
             return;
         }
@@ -110,86 +89,25 @@ export const getMonstersIDs = ({ gameState }: { gameState: GameState }): number[
     return monsterIDs;
 };
 
-/*
-export class GameState {
-    players: {
-        [PlayerID.ME]: {
-            baseHealth: number;
-            mana: number;
-            heroes: number[];
-            baseCoordinates: Vector2D;
-        };
-        [PlayerID.OPPONENT]: {
-            baseHealth: number;
-            mana: number;
-            heroes: number[];
-            baseCoordinates: Vector2D;
-        };
-    };
-
-    entityHistoryMap: { [index: number]: Entity };
-
-    monsters: number[];
-
-    constructor() {
-        this.players = {
-            [PlayerID.ME]: {
-                baseHealth: 0,
-                mana: 0,
-                heroes: [],
-                baseCoordinates: { x: 0, y: 0 },
-            },
-            [PlayerID.OPPONENT]: {
-                baseHealth: 0,
-                mana: 0,
-                heroes: [],
-                baseCoordinates: { x: 0, y: 0 },
-            },
-        };
-        this.entityHistoryMap = {};
-        this.monsters = [];
-    }
-
-    setBaseForPlayer({
-        playerID,
-        baseHealth,
-        baseCoordinates,
-    }: {
-        playerID: PlayerID;
-        baseHealth: number;
-        baseCoordinates: Vector2D;
-    }) {
-        this.players[playerID] = {
-            ...this.players[playerID],
-            baseHealth,
-            baseCoordinates,
-        };
-    }
-
-    setManaForPlayer({ playerID, mana }: { playerID: PlayerID; mana: number }) {
-        this.players[playerID] = {
-            ...this.players[playerID],
-            mana,
-        };
-    }
-
-    addEntity({ entity }: { entity: Entity }) {
-        this.entityHistoryMap[entity.id] = entity;
-        switch (entity.type) {
-            case EntityType.MY_HERO: {
-                return this.players[PlayerID.ME].heroes.push(entity.id);
-            }
-            case EntityType.OPPONENT_HERO: {
-                return this.players[PlayerID.OPPONENT].heroes.push(entity.id);
-            }
-            case EntityType.MONSTER: {
-                return this.monsters.push(entity.id);
-            }
-            default: {
-                throw new Error(`Unhandled entity type -> ${entity.type}`);
-            }
+export const createCompositeGameState = ({
+    oldGameState,
+    newGameState,
+}: {
+    oldGameState: GameState;
+    newGameState: GameState;
+}): GameState => {
+    const compositeGameState: GameState = newGameState;
+    const oldEntityIDs = Object.keys(oldGameState.entityMap).map((v) => Number.parseInt(v));
+    oldEntityIDs.forEach((oldEntityID) => {
+        if (compositeGameState.entityMap[oldEntityID]) {
+            return;
         }
-    }
-}
-
-*/
+        const entityNotSeenThisTurn = oldGameState.entityMap[oldEntityID];
+        if (isMonsterWithinBase({ gameState: oldGameState, entity: entityNotSeenThisTurn })) {
+            return;
+        }
+        const expectedPosition = getEntityExpectedPosition({ entity: entityNotSeenThisTurn });
+        compositeGameState.entityMap[oldEntityID] = { ...entityNotSeenThisTurn, position: expectedPosition };
+    });
+    return compositeGameState;
+};

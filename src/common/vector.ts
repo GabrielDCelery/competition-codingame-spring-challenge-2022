@@ -47,8 +47,12 @@ export const vector2DTruncate = ({ v, max }: { v: Vector2D; max: number }): Vect
     return { x: v.x * ratio, y: v.y * ratio };
 };
 
-export const vector2DDistance = ({ v1, v2 }: { v1: Vector2D; v2: Vector2D }): number => {
+export const vector2DDistancePow = ({ v1, v2 }: { v1: Vector2D; v2: Vector2D }): number => {
     const distX = Math.abs(v1.x - v2.x);
     const distY = Math.abs(v1.y - v2.y);
-    return Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+    return Math.pow(distX, 2) + Math.pow(distY, 2);
+};
+
+export const vector2DDistance = ({ v1, v2 }: { v1: Vector2D; v2: Vector2D }): number => {
+    return Math.sqrt(vector2DDistancePow({ v1, v2 }));
 };

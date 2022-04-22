@@ -1,4 +1,5 @@
 import { Vector2D } from './common';
+import { HERO_MAX_SPEED, MONSTER_MAX_SPEED } from './config';
 
 export enum EntityType {
     MONSTER = 0,
@@ -21,6 +22,11 @@ export enum EntityNearBase {
     TARGETING_BASE = 1,
 }
 
+export type EntityBase = {
+    id: number;
+    type: number;
+};
+
 export type MovingEntity = {
     position: Vector2D;
     velocity: Vector2D;
@@ -28,11 +34,27 @@ export type MovingEntity = {
 };
 
 export type Entity = {
-    id: number;
-    type: number;
     shieldLife: number;
     isControlled: number;
     health: number;
     nearBase: number;
     threatFor: number;
-} & MovingEntity;
+} & MovingEntity &
+    EntityBase;
+
+export const getMaxSpeedOfEntity = ({ entityType }: { entityType: number }): number => {
+    switch (entityType) {
+        case EntityType.MY_HERO: {
+            return HERO_MAX_SPEED;
+        }
+        case EntityType.MONSTER: {
+            return MONSTER_MAX_SPEED;
+        }
+        case EntityType.OPPONENT_HERO: {
+            return HERO_MAX_SPEED;
+        }
+        default: {
+            throw new Error(`Unhandled entity type: ${entityType}`);
+        }
+    }
+};

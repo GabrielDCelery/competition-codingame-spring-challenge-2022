@@ -84,3 +84,7 @@ export const pursuitTargetEntityNextPosition = ({
     const truncatedDesireVelocity = pursuitTargetEntityVelocity({ sourceEntity, targetEntity });
     return vector2DAdd({ v1: sourceEntity.position, v2: truncatedDesireVelocity });
 };
+
+export const getEntityExpectedPosition = ({ entity }: { entity: MovingEntity }): Vector2D => {
+    return vector2DAdd({ v1: entity.position, v2: entity.velocity });
+};
