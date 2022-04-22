@@ -1,5 +1,4 @@
-import { HERO_MAX_SPEED, MONSTER_MAX_SPEED } from '../config';
-import { EntityType, Entity } from '../entity';
+import { MovingEntity } from '../entity';
 import {
     Vector2D,
     vector2DSubtract,
@@ -10,24 +9,6 @@ import {
     vector2DAdd,
     vector2DMultiply,
 } from './vector';
-
-export const getEntityMaxSpeed = ({ entity }: { entity: Entity }) => {
-    const { type } = entity;
-    switch (type) {
-        case EntityType.MY_HERO: {
-            return HERO_MAX_SPEED;
-        }
-        case EntityType.MONSTER: {
-            return MONSTER_MAX_SPEED;
-        }
-        case EntityType.OPPONENT_HERO: {
-            return HERO_MAX_SPEED;
-        }
-        default: {
-            throw new Error(`Unhandled entity type: ${type}`);
-        }
-    }
-};
 
 export const moveToTargetPositionVelocity = ({
     sourcePos,
@@ -60,15 +41,15 @@ export const pursuitTargetEntityVelocity = ({
     sourceEntity,
     targetEntity,
 }: {
-    sourceEntity: Entity;
-    targetEntity: Entity;
+    sourceEntity: MovingEntity;
+    targetEntity: MovingEntity;
 }): Vector2D => {
     const toTarget = vector2DSubtract({ v1: targetEntity.position, v2: sourceEntity.position });
 
     const targetHeading = vector2DNormalize({ v: targetEntity.velocity });
     const myHeading = vector2DNormalize({ v: sourceEntity.velocity });
 
-    const sourceMaxSpeed = getEntityMaxSpeed({ entity: sourceEntity });
+    const sourceMaxSpeed = sourceEntity.maxSpeed;
 
     if (
         vector2DDot({ v1: toTarget, v2: myHeading }) > 0 &&
@@ -81,7 +62,7 @@ export const pursuitTargetEntityVelocity = ({
         });
     }
 
-    const targetMaxSpeed = getEntityMaxSpeed({ entity: targetEntity });
+    const targetMaxSpeed = targetEntity.maxSpeed;
 
     const lookAheadTime = vector2DLength({ v: toTarget }) / (sourceMaxSpeed + targetMaxSpeed);
 
@@ -101,8 +82,8 @@ export const pursuitTargetEntityNextPosition = ({
     sourceEntity,
     targetEntity,
 }: {
-    sourceEntity: Entity;
-    targetEntity: Entity;
+    sourceEntity: MovingEntity;
+    targetEntity: MovingEntity;
 }): Vector2D => {
     const truncatedDesireVelocity = pursuitTargetEntityVelocity({ sourceEntity, targetEntity });
     return vector2DAdd({ v1: sourceEntity.position, v2: truncatedDesireVelocity });

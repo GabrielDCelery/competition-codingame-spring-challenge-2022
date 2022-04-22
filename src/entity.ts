@@ -21,6 +21,12 @@ export enum EntityNearBase {
     TARGETING_BASE = 1,
 }
 
+export type MovingEntity = {
+    position: Vector2D;
+    velocity: Vector2D;
+    maxSpeed: number;
+};
+
 export type Entity = {
     id: number;
     type: number;
@@ -29,6 +35,4 @@ export type Entity = {
     health: number;
     nearBase: number;
     threatFor: number;
-    position: Vector2D;
-    velocity: Vector2D;
-};
+} & MovingEntity;

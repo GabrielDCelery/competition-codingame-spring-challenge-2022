@@ -1,2 +1,2 @@
 export * from './vector';
-export * from './moving-object';
+export * from './moving-entity';
