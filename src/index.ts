@@ -87,7 +87,25 @@ try {
             });
         });
 
-        console.error(JSON.stringify(chosenHeroCommands));
+        gameStateAnalysis.players[GS.PlayerID.ME].heroes.forEach((heroID) => {
+            return behaviourTree.execute({
+                heroID,
+                gameState: compositeGameState,
+                gameStateAnalysis,
+                chosenHeroCommands,
+            });
+        });
+
+        gameStateAnalysis.players[GS.PlayerID.ME].heroes.forEach((heroID) => {
+            return behaviourTree.execute({
+                heroID,
+                gameState: compositeGameState,
+                gameStateAnalysis,
+                chosenHeroCommands,
+            });
+        });
+
+        // console.error(JSON.stringify(chosenHeroCommands));
 
         const commands = Object.values(chosenHeroCommands).map((chosenCommand) => {
             switch (chosenCommand.type) {
@@ -107,43 +125,6 @@ try {
                 }
             }
         });
-
-        /*
-
-        const chosenMonster: { [index: number]: true } = {};
-
-        const heroTargets: { [index: number]: number } = {};
-
-        gameStateAnalysis.players[GS.PlayerID.ME].heroes.forEach((myHeroID) => {
-            gameStateAnalysis.monsters.forEach((monsterID) => {
-                const monster = compositeGameState.entityMap[monsterID];
-                if (
-                    monster.threatFor === EntityThreatFor.MY_BASE &&
-                    heroTargets[myHeroID] === undefined &&
-                    chosenMonster[monsterID] !== true
-                ) {
-                    heroTargets[myHeroID] = monsterID;
-                    chosenMonster[monsterID] = true;
-                }
-            });
-        });
-
-        const commands = gameStateAnalysis.players[GS.PlayerID.ME].heroes.map((myHeroID) => {
-            const myHero = compositeGameState.entityMap[myHeroID];
-            if (heroTargets[myHeroID] === undefined) {
-                return 'WAIT';
-            }
-            const monster = compositeGameState.entityMap[heroTargets[myHeroID]];
-
-            const taretVelocity = pursuitTargetEntityNextPosition({
-                sourceEntity: myHero,
-                targetEntity: monster,
-            });
-
-            return `MOVE ${Math.round(taretVelocity.x)} ${Math.round(taretVelocity.y)}`;
-        });
-
-        */
 
         commands.forEach((command) => {
             console.log(command);
