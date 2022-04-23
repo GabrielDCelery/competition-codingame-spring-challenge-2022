@@ -1,6 +1,7 @@
 import { EntityBase, MovingEntity } from './entity';
 
 export enum CommandType {
+    PAUSE = 'PAUSE',
     WAIT = 'WAIT',
     MELEE = 'MELEE',
 }

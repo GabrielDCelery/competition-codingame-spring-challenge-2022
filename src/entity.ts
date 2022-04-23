@@ -42,6 +42,21 @@ export type Entity = {
 } & MovingEntity &
     EntityBase;
 
+export const cloneEntity = ({ entity }: { entity: Entity }): Entity => {
+    return {
+        id: entity.id,
+        type: entity.type,
+        shieldLife: entity.shieldLife,
+        isControlled: entity.isControlled,
+        health: entity.health,
+        nearBase: entity.nearBase,
+        threatFor: entity.threatFor,
+        position: { x: entity.position.x, y: entity.position.y },
+        velocity: { x: entity.velocity.x, y: entity.velocity.y },
+        maxSpeed: entity.maxSpeed,
+    };
+};
+
 export const getMaxSpeedOfEntity = ({ entityType }: { entityType: number }): number => {
     switch (entityType) {
         case EntityType.MY_HERO: {

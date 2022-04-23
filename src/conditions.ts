@@ -1,5 +1,5 @@
 import { vector2DDistance, vector2DDistancePow } from './common';
-import { MAP_HEIGHT, MAP_WIDTH, MONSTER_DETECTION_THRESHOLD } from './config';
+import { BASE_VISION_RANGE, MAP_HEIGHT, MAP_WIDTH, MONSTER_BASE_DETECTION_THRESHOLD } from './config';
 import { Entity, EntityThreatFor, EntityType, MovingEntity } from './entity';
 import { GameState, PlayerID } from './game-state';
 
@@ -11,12 +11,12 @@ export const isMonsterThreateningMyBase = ({ entity }: { entity: Entity }): bool
     return entity.threatFor === EntityThreatFor.MY_BASE;
 };
 
-export const isMonsterWithinBase = ({ gameState, entity }: { gameState: GameState; entity: Entity }): boolean => {
+export const isEntitySeenByBase = ({ gameState, entity }: { gameState: GameState; entity: Entity }): boolean => {
     return (
         vector2DDistance({ v1: entity.position, v2: gameState.players[PlayerID.ME].baseCoordinates }) <=
-            MONSTER_DETECTION_THRESHOLD ||
+            BASE_VISION_RANGE ||
         vector2DDistance({ v1: entity.position, v2: gameState.players[PlayerID.OPPONENT].baseCoordinates }) <=
-            MONSTER_DETECTION_THRESHOLD
+            BASE_VISION_RANGE
     );
 };
 

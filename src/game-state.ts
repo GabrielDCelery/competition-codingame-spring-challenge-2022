@@ -1,6 +1,6 @@
 import { getEntityExpectedPosition, Vector2D } from './common';
-import { isMonsterWithinBase } from './conditions';
-import { Entity, EntityType } from './entity';
+import { isEntityWithinMapBoundaries, isEntitySeenByBase } from './conditions';
+import { cloneEntity, Entity, EntityType } from './entity';
 
 export enum PlayerID {
     ME = 0,
@@ -78,17 +78,6 @@ export const addEntity = ({ gameState, entity }: { gameState: GameState; entity:
     return gameStateCopy;
 };
 
-export const getMonstersIDs = ({ gameState }: { gameState: GameState }): number[] => {
-    const monsterIDs: number[] = [];
-    Object.values(gameState.entityMap).forEach((entity) => {
-        if (entity.type !== EntityType.MONSTER) {
-            return;
-        }
-        monsterIDs.push(entity.id);
-    });
-    return monsterIDs;
-};
-
 export const createCompositeGameState = ({
     oldGameState,
     newGameState,
@@ -99,15 +88,20 @@ export const createCompositeGameState = ({
     const compositeGameState: GameState = newGameState;
     const oldEntityIDs = Object.keys(oldGameState.entityMap).map((v) => Number.parseInt(v));
     oldEntityIDs.forEach((oldEntityID) => {
-        if (compositeGameState.entityMap[oldEntityID]) {
+        const entityWasSeenThisTurn = !!compositeGameState.entityMap[oldEntityID];
+        if (entityWasSeenThisTurn) {
             return;
         }
-        const entityNotSeenThisTurn = oldGameState.entityMap[oldEntityID];
-        if (isMonsterWithinBase({ gameState: oldGameState, entity: entityNotSeenThisTurn })) {
+        const entityLastKnowState = oldGameState.entityMap[oldEntityID];
+        if (isEntitySeenByBase({ gameState: oldGameState, entity: entityLastKnowState })) {
             return;
         }
-        const expectedPosition = getEntityExpectedPosition({ entity: entityNotSeenThisTurn });
-        compositeGameState.entityMap[oldEntityID] = { ...entityNotSeenThisTurn, position: expectedPosition };
+        const expectedPosition = getEntityExpectedPosition({ entity: entityLastKnowState });
+        const newEntity = { ...cloneEntity({ entity: entityLastKnowState }), position: expectedPosition };
+        if (!isEntityWithinMapBoundaries({ entity: newEntity })) {
+            return;
+        }
+        compositeGameState.entityMap[oldEntityID] = newEntity;
     });
     return compositeGameState;
 };

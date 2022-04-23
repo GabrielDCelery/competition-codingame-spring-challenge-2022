@@ -3,7 +3,7 @@ import * as GSA from './game-state-analysis';
 import { Entity, EntityThreatFor, getMaxSpeedOfEntity } from './entity';
 import { MAP_HEIGHT, MAP_WIDTH } from './config';
 import { pursuitTargetEntityNextPosition } from './common';
-import { behaviourTree } from './behaviour-tree';
+import { heroAI } from './behaviour-tree';
 import { ChosenHeroCommands, CommandType } from './commands';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,10 +76,12 @@ try {
         const compositeGameState = GS.createCompositeGameState({ oldGameState, newGameState });
         const gameStateAnalysis = GSA.createGameStateAnalysis({ gameState: compositeGameState });
 
+        //  console.error(JSON.stringify(gameStateAnalysis));
+
         const chosenHeroCommands: ChosenHeroCommands = {};
 
-        gameStateAnalysis.players[GS.PlayerID.ME].heroes.forEach((heroID) => {
-            return behaviourTree.execute({
+        gameStateAnalysis.players[GS.PlayerID.ME].heroIDs.forEach((heroID) => {
+            return heroAI.execute({
                 heroID,
                 gameState: compositeGameState,
                 gameStateAnalysis,
@@ -87,8 +89,8 @@ try {
             });
         });
 
-        gameStateAnalysis.players[GS.PlayerID.ME].heroes.forEach((heroID) => {
-            return behaviourTree.execute({
+        gameStateAnalysis.players[GS.PlayerID.ME].heroIDs.forEach((heroID) => {
+            return heroAI.execute({
                 heroID,
                 gameState: compositeGameState,
                 gameStateAnalysis,
@@ -96,8 +98,8 @@ try {
             });
         });
 
-        gameStateAnalysis.players[GS.PlayerID.ME].heroes.forEach((heroID) => {
-            return behaviourTree.execute({
+        gameStateAnalysis.players[GS.PlayerID.ME].heroIDs.forEach((heroID) => {
+            return heroAI.execute({
                 heroID,
                 gameState: compositeGameState,
                 gameStateAnalysis,
