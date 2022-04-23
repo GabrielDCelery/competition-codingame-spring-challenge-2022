@@ -2,10 +2,12 @@ import { ChosenHeroCommands } from '../commands';
 import { GameState } from '../game-state';
 import { GameStateAnalysis } from '../game-state-analysis';
 
-export abstract class CompositeNode {
-    protected nodes: (CompositeNode | LeafNode)[];
+type BehaviourTreeNode = CompositeNode | LeafNode | DecoratorNode;
 
-    constructor(nodes: (CompositeNode | LeafNode)[]) {
+export abstract class CompositeNode {
+    protected nodes: BehaviourTreeNode[];
+
+    constructor(nodes: BehaviourTreeNode[]) {
         this.nodes = nodes;
     }
 
@@ -42,14 +44,42 @@ export abstract class CompositeNode {
     }
 }
 
-export abstract class LeafNode {
-    protected _execute({
+export abstract class DecoratorNode {
+    protected node: BehaviourTreeNode;
+
+    constructor(node: BehaviourTreeNode) {
+        this.node = node;
+    }
+
+    protected _execute({}: {
+        heroID: number;
+        gameState: GameState;
+        gameStateAnalysis: GameStateAnalysis;
+        chosenHeroCommands: ChosenHeroCommands;
+        localCache: LocalCache;
+    }): boolean {
+        throw new Error(`Child needs to execute`);
+    }
+
+    execute({
         heroID,
         gameState,
         gameStateAnalysis,
         chosenHeroCommands,
         localCache,
     }: {
+        heroID: number;
+        gameState: GameState;
+        gameStateAnalysis: GameStateAnalysis;
+        chosenHeroCommands: ChosenHeroCommands;
+        localCache: LocalCache;
+    }): boolean {
+        return this._execute({ heroID, gameState, gameStateAnalysis, chosenHeroCommands, localCache });
+    }
+}
+
+export abstract class LeafNode {
+    protected _execute({}: {
         heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
@@ -138,7 +168,7 @@ export class SelectNode extends CompositeNode {
 
 export enum LocalCacheKey {
     UNHANDLED_MONSTER_IDS = 'UNHANDLED_MONSTER_IDS',
-    EVALUATED_MONSTER_ID = 'EVALUATED_MONSTER_ID',
+    TARGET_MONSTER_ID = 'TARGET_MONSTER_ID',
 }
 
 export class LocalCache {
@@ -152,10 +182,10 @@ export class LocalCache {
         this.clearCache = this.clearCache.bind(this);
     }
 
-    get<T>({ key }: { key: LocalCacheKey }): T | undefined {
+    get<T>({ key }: { key: LocalCacheKey }): T {
         const value = this.cache[key];
         if (value === undefined) {
-            return undefined;
+            throw new Error(`No value in local cache at ${key}`);
         }
         return value as T;
     }
@@ -174,10 +204,10 @@ export class LocalCache {
 }
 
 export class BehaviourTree {
-    private rootNode: CompositeNode | LeafNode;
+    private rootNode: BehaviourTreeNode;
     private localCache: LocalCache;
 
-    constructor(rootNode: CompositeNode | LeafNode) {
+    constructor(rootNode: BehaviourTreeNode) {
         this.rootNode = rootNode;
         this.localCache = new LocalCache();
     }

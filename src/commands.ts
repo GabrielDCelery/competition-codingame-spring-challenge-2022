@@ -4,6 +4,7 @@ export enum CommandType {
     PAUSE = 'PAUSE',
     WAIT = 'WAIT',
     MELEE = 'MELEE',
+    CAST_SPELL_WIND = 'CAST_SPELL_WIND',
 }
 
 export type Command = {

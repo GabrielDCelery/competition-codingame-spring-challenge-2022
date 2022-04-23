@@ -119,14 +119,19 @@ try {
                         sourceEntity: chosenCommand.source,
                         targetEntity: chosenCommand.target,
                     });
-
                     return `MOVE ${Math.round(taretVelocity.x)} ${Math.round(taretVelocity.y)}`;
+                }
+                case CommandType.CAST_SPELL_WIND: {
+                    const { x, y } = chosenCommand.target.position;
+                    return `SPELL WIND ${Math.round(x)} ${Math.round(y)}`;
                 }
                 default: {
                     throw new Error('oops');
                 }
             }
         });
+
+        //   console.error(JSON.stringify(commands));
 
         commands.forEach((command) => {
             console.log(command);

@@ -1,5 +1,5 @@
 import { ChosenHeroCommands, CommandType } from '../../commands';
-import { GameState, PlayerID } from '../../game-state';
+import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode } from '../common';
 

@@ -1,24 +1,26 @@
 import { ChosenHeroCommands, CommandType } from '../../commands';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../common';
 
-export class Pause extends LeafNode {
+export class InterceptTargetMonster extends LeafNode {
     protected _execute({
         heroID,
         gameState,
         chosenHeroCommands,
+        localCache,
     }: {
         heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
+        localCache: LocalCache;
     }): boolean {
-        const { id, position, velocity, maxSpeed, type } = gameState.entityMap[heroID];
+        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
         chosenHeroCommands[heroID] = {
-            type: CommandType.PAUSE,
-            source: { id, type, position, velocity, maxSpeed },
-            target: { id, type, position, velocity, maxSpeed },
+            type: CommandType.MELEE,
+            source: gameState.entityMap[heroID],
+            target: gameState.entityMap[targetMonsterID],
         };
         return true;
     }

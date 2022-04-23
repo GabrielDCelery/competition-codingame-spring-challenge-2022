@@ -5,6 +5,7 @@ export enum EntityType {
     MONSTER = 0,
     MY_HERO = 1,
     OPPONENT_HERO = 2,
+    POINT_ON_MAP = 3,
 }
 
 export enum EntityThreatFor {

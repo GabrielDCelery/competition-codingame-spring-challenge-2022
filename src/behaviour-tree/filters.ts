@@ -1,5 +1,6 @@
 import { ChosenHeroCommands, CommandType } from '../commands';
-import { EntityType } from '../entity';
+import { vector2DDistancePow } from '../common';
+import { EntityBase, EntityType, MovingEntity } from '../entity';
 import { PlayerID } from '../game-state';
 import { GameStateAnalysis } from '../game-state-analysis';
 
@@ -40,4 +41,24 @@ export const getMyOtherAvailableHeroIDs = ({
     });
 
     return otherAvailableHeroIDs;
+};
+
+export const getClosestEntityID = ({
+    sourceEntity,
+    targetEntities,
+}: {
+    sourceEntity: MovingEntity & EntityBase;
+    targetEntities: (MovingEntity & EntityBase)[];
+}): number => {
+    let closestEntity = sourceEntity;
+    let distancePow = 0;
+    targetEntities.forEach((targetEntity) => {
+        const newDistancePow = vector2DDistancePow({ v1: sourceEntity.position, v2: targetEntity.position });
+        if (newDistancePow < distancePow) {
+            return;
+        }
+        closestEntity = targetEntity;
+        distancePow = newDistancePow;
+    });
+    return closestEntity.id;
 };

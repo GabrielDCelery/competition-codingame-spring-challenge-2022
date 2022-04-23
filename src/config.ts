@@ -12,3 +12,8 @@ export const HERO_VISION_RANGE = 2200;
 
 export const WIND_SPELL_CAST_RANGE = 1280;
 export const WIND_SPELL_POWER_RANGE = 2200;
+
+export const HERO_MELEE_RANGE = 800;
+export const HERO_MELEE_DAMAGE = 2;
+
+export const SPELL_MANA_COST = 10;
