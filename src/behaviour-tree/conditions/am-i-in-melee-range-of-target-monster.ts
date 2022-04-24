@@ -3,7 +3,7 @@ import { vector2DDistance } from '../../common';
 import { HERO_MELEE_RANGE } from '../../config';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
 export class AmIInMeleeRangeOfTargetMonster extends LeafNode {
     protected _execute({

@@ -4,7 +4,7 @@ import { WIND_SPELL_POWER_RANGE } from '../../config';
 import { EntityType } from '../../entity';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
 export class PushMonstersOutsideOfMyBase extends LeafNode {
     protected _execute({

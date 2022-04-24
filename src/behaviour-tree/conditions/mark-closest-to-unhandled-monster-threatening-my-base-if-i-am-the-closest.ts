@@ -2,7 +2,7 @@ import { ChosenHeroCommands } from '../../commands';
 import { isEntityClosestToTarget } from '../../conditions';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { getMyOtherAvailableHeroIDs } from '../filters';
 
 export class MarkClosestToUnhandledMonsterThreateningMyBaseIfIAmTheClosest extends LeafNode {
@@ -20,7 +20,7 @@ export class MarkClosestToUnhandledMonsterThreateningMyBaseIfIAmTheClosest exten
         localCache: LocalCache;
     }): boolean {
         const [potentialTargetMonsterID] = localCache.get<number[]>({
-            key: LocalCacheKey.UNHANDLED_THREATENING_MONSTER_IDS,
+            key: LocalCacheKey.TARGET_MONSTER_IDS,
         });
         const otherHeroIDs = getMyOtherAvailableHeroIDs({ heroID, gameStateAnalysis, chosenHeroCommands });
         const amIClosest = isEntityClosestToTarget({

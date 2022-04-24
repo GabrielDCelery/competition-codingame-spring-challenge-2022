@@ -2,7 +2,7 @@ import { ChosenHeroCommands, CommandType } from '../../commands';
 import { EntityType } from '../../entity';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache } from '../common';
+import { LeafNode, LocalCache } from '../bt-engine';
 import { getClosestEntityID } from '../filters';
 
 export class AssistInKillingMonsterMarkedForInterception extends LeafNode {

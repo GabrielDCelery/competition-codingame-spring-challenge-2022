@@ -7,7 +7,7 @@ import {
     Wait,
     MoveToArea,
 } from './actions';
-import { BehaviourTree, SelectNode, SequenceNode } from './common';
+import { BehaviourTree, SelectNode, SequenceNode } from './bt-engine';
 import {
     MarkClosestToUnhandledMonsterThreateningMyBaseIfIAmTheClosest,
     HaveMonstersBeenMarkedForInterception,
@@ -21,32 +21,28 @@ import {
     HasUnhandledWanderingMonsters,
     HasNonPatrolledAreas,
     MarkClosestNonPatrolledAreaIfIAmTheClosest,
+    AmIClosestToTargetMonster,
 } from './conditions';
+import { TargetMonsterClosestToBase } from './conditions/target-monster-closest-to-base';
 import { InverterNode } from './decorators';
-import { ClearLocalCache } from './helpers';
+import { ClearLocalCache, FilterAlreadyTargetedMonsters, GetMonstersThreateningMyBase } from './helpers';
 
 const defendBaseFromMonsterThreatsBehaviour = new SequenceNode([
-    new HasUnhandledMonstersThreateningMyBase(),
+    new GetMonstersThreateningMyBase(),
+    new FilterAlreadyTargetedMonsters(),
+    new TargetMonsterClosestToBase(),
     new SelectNode([
+        new SequenceNode([new InverterNode(new AmIClosestToTargetMonster()), new Pause()]),
         new SequenceNode([
-            new MarkClosestToUnhandledMonsterThreateningMyBaseIfIAmTheClosest(),
+            new IsTargetMonsterWithinMyBase(),
+            new AmIInMeleeRangeOfTargetMonster(),
             new SelectNode([
-                new SequenceNode([
-                    new IsTargetMonsterWithinMyBase(),
-                    new AmIInMeleeRangeOfTargetMonster(),
-                    new SelectNode([
-                        new SequenceNode([
-                            new CanIDestroyTargetMonsterBeforeItDamagesMyBase(),
-                            new InterceptTargetMonster(),
-                        ]),
-                        new SequenceNode([new DoIHaveEnoughManaToCastSpells(), new PushMonstersOutsideOfMyBase()]),
-                        new InterceptTargetMonster(),
-                    ]),
-                ]),
+                new SequenceNode([new CanIDestroyTargetMonsterBeforeItDamagesMyBase(), new InterceptTargetMonster()]),
+                new SequenceNode([new DoIHaveEnoughManaToCastSpells(), new PushMonstersOutsideOfMyBase()]),
                 new InterceptTargetMonster(),
             ]),
         ]),
-        new Pause(),
+        new InterceptTargetMonster(),
     ]),
 ]);
 

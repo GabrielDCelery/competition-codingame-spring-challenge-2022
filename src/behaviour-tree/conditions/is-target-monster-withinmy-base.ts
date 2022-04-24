@@ -3,7 +3,7 @@ import { vector2DDistance } from '../../common';
 import { MONSTER_BASE_DETECTION_THRESHOLD } from '../../config';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
 export class IsTargetMonsterWithinMyBase extends LeafNode {
     protected _execute({

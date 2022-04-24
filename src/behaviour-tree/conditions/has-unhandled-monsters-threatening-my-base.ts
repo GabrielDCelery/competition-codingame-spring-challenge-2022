@@ -1,7 +1,7 @@
 import { ChosenHeroCommands } from '../../commands';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { filterDownToUnhandledMonsterIDs } from '../filters';
 
 export class HasUnhandledMonstersThreateningMyBase extends LeafNode {
@@ -24,7 +24,7 @@ export class HasUnhandledMonstersThreateningMyBase extends LeafNode {
             gameStateAnalysis,
             chosenHeroCommands,
         });
-        localCache.set<number[]>({ key: LocalCacheKey.UNHANDLED_THREATENING_MONSTER_IDS, value: unhandledMonsterIDs });
+        localCache.set<number[]>({ key: LocalCacheKey.TARGET_MONSTER_IDS, value: unhandledMonsterIDs });
         return unhandledMonsterIDs.length > 0;
     }
 }

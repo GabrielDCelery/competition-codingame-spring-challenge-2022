@@ -2,7 +2,7 @@ import { ChosenHeroCommands } from '../../commands';
 import { Vector2D } from '../../common';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis, PositionType } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { filterDownToNonPatrolledPositions, filterDownToUnhandledMonsterIDs } from '../filters';
 
 export class HasNonPatrolledAreas extends LeafNode {

@@ -4,7 +4,7 @@ import { isEntityClosestToTarget } from '../../conditions';
 import { EntityType } from '../../entity';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { getClosestPosition, getMyOtherAvailableHeroIDs } from '../filters';
 
 export class MarkClosestNonPatrolledAreaIfIAmTheClosest extends LeafNode {

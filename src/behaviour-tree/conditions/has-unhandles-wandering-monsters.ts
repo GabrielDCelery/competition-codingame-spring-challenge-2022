@@ -2,7 +2,7 @@ import { ChosenHeroCommands } from '../../commands';
 import { vector2DDistancePow } from '../../common';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { filterDownToUnhandledMonsterIDs } from '../filters';
 
 export class HasUnhandledWanderingMonsters extends LeafNode {

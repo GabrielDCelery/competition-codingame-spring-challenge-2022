@@ -1,14 +1,11 @@
 import { ChosenHeroCommands } from '../../commands';
-import { GameState } from '../../game-state';
+import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { DecoratorNode, LocalCache } from '../bt-engine';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class InverterNode extends DecoratorNode {
+export class GetMonstersThreateningMyBase extends LeafNode {
     protected _execute({
-        heroID,
-        gameState,
         gameStateAnalysis,
-        chosenHeroCommands,
         localCache,
     }: {
         heroID: number;
@@ -17,7 +14,10 @@ export class InverterNode extends DecoratorNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const result = this.node.execute({ heroID, gameState, gameStateAnalysis, chosenHeroCommands, localCache });
-        return !result;
+        localCache.set<number[]>({
+            key: LocalCacheKey.TARGET_MONSTER_IDS,
+            value: gameStateAnalysis.players[PlayerID.ME].monsterThreateningMyBaseByDistanceIDs,
+        });
+        return true;
     }
 }

@@ -2,7 +2,7 @@ import { ChosenHeroCommands } from '../../commands';
 import { isEntityClosestToTarget } from '../../conditions';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { getClosestEntityID, getMyOtherAvailableHeroIDs } from '../filters';
 
 export class MarkClosestAvailableWanderingMonsterForFarmingIfIAmTheClosest extends LeafNode {

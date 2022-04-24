@@ -77,3 +77,35 @@ export const haveAllMyHeroesBeenAsignedCommands = ({
 export const isPositionNearMapMarker = ({ position, mapMarker }: { position: Vector2D; mapMarker: Vector2D }) => {
     return vector2DDistancePow({ v1: position, v2: mapMarker }) <= 300 * 300;
 };
+
+export const areVectorsWithinDistance = ({
+    v1,
+    v2,
+    distance,
+}: {
+    v1: Vector2D;
+    v2: Vector2D;
+    distance: number;
+}): boolean => {
+    return vector2DDistancePow({ v1, v2 }) <= Math.pow(distance, 2);
+};
+
+export const isClosestPosition = ({
+    sourcePosition,
+    targetPosition,
+    otherPositions,
+}: {
+    sourcePosition: Vector2D;
+    targetPosition: Vector2D;
+    otherPositions: Vector2D[];
+}): boolean => {
+    const distancePow = vector2DDistancePow({ v1: sourcePosition, v2: targetPosition });
+    for (let i = 0, iMax = otherPositions.length; i < iMax; i++) {
+        const otherPosition = otherPositions[i];
+        const otherDistancePow = vector2DDistancePow({ v1: otherPosition, v2: targetPosition });
+        if (otherDistancePow < distancePow) {
+            return false;
+        }
+    }
+    return true;
+};

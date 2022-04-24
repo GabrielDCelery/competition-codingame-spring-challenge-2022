@@ -11,3 +11,4 @@ export * from './is-target-monster-withinmy-base';
 export * from './mark-closest-to-unhandled-monster-threatening-my-base-if-i-am-the-closest';
 export * from './mark-closest-unpatrolled-area-if-i-am-the-closest';
 export * from './mark-closest-wandering-monster-for-farming';
+export * from './am-i-closest-to-target-monster';

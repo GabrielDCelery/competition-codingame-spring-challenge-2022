@@ -1,7 +1,7 @@
 import { ChosenHeroCommands, CommandType } from '../../commands';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode } from '../common';
+import { LeafNode } from '../bt-engine';
 
 export class Pause extends LeafNode {
     protected _execute({

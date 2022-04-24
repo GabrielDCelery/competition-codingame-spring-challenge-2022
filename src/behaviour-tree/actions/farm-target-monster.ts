@@ -1,7 +1,7 @@
 import { ChosenHeroCommands, CommandType } from '../../commands';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
 export class FarmTargetMonster extends LeafNode {
     protected _execute({

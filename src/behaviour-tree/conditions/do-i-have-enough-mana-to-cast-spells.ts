@@ -2,7 +2,7 @@ import { ChosenHeroCommands, CommandType } from '../../commands';
 import { HERO_MELEE_DAMAGE, SPELL_MANA_COST } from '../../config';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
 export class DoIHaveEnoughManaToCastSpells extends LeafNode {
     protected _execute({

@@ -1,7 +1,7 @@
 import { ChosenHeroCommands } from '../../commands';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { filterDownToUnhandledMonsterIDs } from '../filters';
 
 export class HasUnhandledMonsters extends LeafNode {

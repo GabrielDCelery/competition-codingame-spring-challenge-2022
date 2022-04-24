@@ -2,7 +2,7 @@ import { ChosenHeroCommands } from '../../commands';
 import { HERO_MELEE_DAMAGE } from '../../config';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../common';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
 export class CanIDestroyTargetMonsterBeforeItDamagesMyBase extends LeafNode {
     protected _execute({
