@@ -8,7 +8,6 @@ export class HaveMonstersBeenMarkedForInterception extends LeafNode {
     protected _execute({
         heroID,
         chosenHeroCommands,
-        localCache,
     }: {
         heroID: number;
         gameState: GameState;

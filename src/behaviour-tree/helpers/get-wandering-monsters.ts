@@ -1,10 +1,11 @@
 import { ChosenHeroCommands } from '../../commands';
-import { GameState } from '../../game-state';
+import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class TargetMonsterClosestToBase extends LeafNode {
+export class GetWanderingMonsters extends LeafNode {
     protected _execute({
+        gameStateAnalysis,
         localCache,
     }: {
         heroID: number;
@@ -13,11 +14,10 @@ export class TargetMonsterClosestToBase extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterIDs = localCache.get<number[]>({ key: LocalCacheKey.TARGET_MONSTER_IDS });
-        if (targetMonsterIDs.length === 0) {
-            return false;
-        }
-        localCache.set<number>({ key: LocalCacheKey.TARGET_MONSTER_ID, value: targetMonsterIDs[0] });
+        localCache.set<number[]>({
+            key: LocalCacheKey.TARGET_MONSTER_IDS,
+            value: gameStateAnalysis.players[PlayerID.ME].monsterWanderingIDs,
+        });
         return true;
     }
 }
