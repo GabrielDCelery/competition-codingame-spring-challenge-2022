@@ -5,7 +5,6 @@ export * from './do-i-have-enough-mana-to-cast-spells';
 export * from './have-monsters-been-marked-for-interception';
 export * from './has-non-patrolled-areas';
 export * from './has-unhandled-monsters';
-export * from './has-unhandled-monsters-threatening-my-base';
 export * from './have-i-already-chosen-command';
 export * from './is-target-monster-withinmy-base';
 export * from './mark-closest-unpatrolled-area-if-i-am-the-closest';

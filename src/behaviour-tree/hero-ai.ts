@@ -1,5 +1,4 @@
 import {
-    AssistInKillingMonsterMarkedForInterception,
     FarmTargetMonster,
     InterceptTargetMonster,
     MoveToArea,
@@ -14,9 +13,7 @@ import {
     CanIDestroyTargetMonsterBeforeItDamagesMyBase,
     DoIHaveEnoughManaToCastSpells,
     HasNonPatrolledAreas,
-    HasUnhandledMonstersThreateningMyBase,
     HaveIAlreadyChosenCommand,
-    HaveMonstersBeenMarkedForInterception,
     IsTargetMonsterWithinMyBase,
     MarkClosestNonPatrolledAreaIfIAmTheClosest,
     TargetMonsterClosestToBase,
@@ -31,7 +28,7 @@ import {
     GetWanderingMonsters,
 } from './helpers';
 
-const defendBaseFromMonsterThreatsBehaviour = new SequenceNode([
+const defendBaseFromMonstersBehaviour = new SequenceNode([
     new GetMonstersThreateningMyBase(),
     new FilterAlreadyTargetedMonsters(),
     new TargetMonsterClosestToBase(),
@@ -61,12 +58,6 @@ const farmBehaviour = new SequenceNode([
     ]),
 ]);
 
-const assistMonsterKillBehaviour = new SequenceNode([
-    new InverterNode(new HasUnhandledMonstersThreateningMyBase()),
-    new HaveMonstersBeenMarkedForInterception(),
-    new AssistInKillingMonsterMarkedForInterception(),
-]);
-
 const patrolBehaviour = new SequenceNode([
     //   new InverterNode(new HasUnhandledMonsters()),
     new HasNonPatrolledAreas(),
@@ -79,9 +70,8 @@ const patrolBehaviour = new SequenceNode([
 const heroAI = new BehaviourTree(
     new SelectNode([
         new SequenceNode([new ClearLocalCache(), new HaveIAlreadyChosenCommand()]),
-        new SequenceNode([new ClearLocalCache(), defendBaseFromMonsterThreatsBehaviour]),
+        new SequenceNode([new ClearLocalCache(), defendBaseFromMonstersBehaviour]),
         new SequenceNode([new ClearLocalCache(), farmBehaviour]),
-        //   new SequenceNode([new ClearLocalCache(), assistMonsterKillBehaviour]),
         new SequenceNode([new ClearLocalCache(), patrolBehaviour]),
         new SequenceNode([new ClearLocalCache(), new Wait()]),
     ])
