@@ -1,11 +1,13 @@
 import { ChosenHeroCommands } from '../../commands';
+import { Vector2D } from '../../common';
 import { isEntityClosestToTarget } from '../../conditions';
+import { EntityType } from '../../entity';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../common';
-import { getMyOtherAvailableHeroIDs } from '../filters';
+import { getClosestPosition, getMyOtherAvailableHeroIDs } from '../filters';
 
-export class MarkClosestToUnhandledMonsterThreateningMyBaseIfIAmTheClosest extends LeafNode {
+export class MarkClosestNonPatrolledAreaIfIAmTheClosest extends LeafNode {
     protected _execute({
         heroID,
         gameState,
@@ -19,19 +21,32 @@ export class MarkClosestToUnhandledMonsterThreateningMyBaseIfIAmTheClosest exten
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const [potentialTargetMonsterID] = localCache.get<number[]>({
-            key: LocalCacheKey.UNHANDLED_THREATENING_MONSTER_IDS,
+        const nonPatrolledPositions = localCache.get<Vector2D[]>({ key: LocalCacheKey.NON_PATROLLED_POSITIONS });
+        const baseEntity = {
+            id: -1,
+            type: EntityType.POINT_ON_MAP,
+            maxSpeed: 0,
+            position: gameState.players[PlayerID.ME].baseCoordinates,
+            velocity: { x: 0, y: 0 },
+        };
+        const closestToMyBaseNonPatrolledPosition = getClosestPosition({
+            sourceEntity: baseEntity,
+            positions: nonPatrolledPositions,
         });
         const otherHeroIDs = getMyOtherAvailableHeroIDs({ heroID, gameStateAnalysis, chosenHeroCommands });
         const amIClosest = isEntityClosestToTarget({
             sourceEntity: gameState.entityMap[heroID],
-            targetEntity: gameState.entityMap[potentialTargetMonsterID],
+            targetEntity: {
+                maxSpeed: 0,
+                position: closestToMyBaseNonPatrolledPosition,
+                velocity: { x: 0, y: 0 },
+            },
             otherEntities: otherHeroIDs.map((otherHeroID) => gameState.entityMap[otherHeroID]),
         });
         if (!amIClosest) {
             return false;
         }
-        localCache.set<number>({ key: LocalCacheKey.TARGET_MONSTER_ID, value: potentialTargetMonsterID });
+        localCache.set<Vector2D>({ key: LocalCacheKey.TARGET_POSITION, value: closestToMyBaseNonPatrolledPosition });
         return true;
     }
 }

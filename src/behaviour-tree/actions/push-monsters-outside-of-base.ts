@@ -6,7 +6,7 @@ import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../common';
 
-export class PushtMonstersOutsideOfMyBase extends LeafNode {
+export class PushMonstersOutsideOfMyBase extends LeafNode {
     protected _execute({
         heroID,
         gameState,
@@ -32,7 +32,7 @@ export class PushtMonstersOutsideOfMyBase extends LeafNode {
         });
 
         chosenHeroCommands[heroID] = {
-            type: CommandType.CAST_SPELL_WIND,
+            type: CommandType.SPELL_WIND,
             source: gameState.entityMap[heroID],
             target: {
                 id: -1,

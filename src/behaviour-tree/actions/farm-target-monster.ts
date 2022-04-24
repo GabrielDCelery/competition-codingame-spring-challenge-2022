@@ -3,7 +3,7 @@ import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../common';
 
-export class InterceptTargetMonster extends LeafNode {
+export class FarmTargetMonster extends LeafNode {
     protected _execute({
         heroID,
         gameState,
@@ -18,7 +18,7 @@ export class InterceptTargetMonster extends LeafNode {
     }): boolean {
         const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
         chosenHeroCommands[heroID] = {
-            type: CommandType.INTERCEPT,
+            type: CommandType.FARM,
             source: gameState.entityMap[heroID],
             target: gameState.entityMap[targetMonsterID],
         };

@@ -1,7 +1,42 @@
-import { Entity, EntityThreatFor, EntityType } from './entity';
+import { EntityThreatFor, EntityType } from './entity';
 import { GameState, PlayerID } from './game-state';
-import { vector2DAdd, vector2DDistance, vector2DMultiply, vector2DNormalize } from './common';
+import { Vector2D, vector2DAdd, vector2DDistance, vector2DMultiply, vector2DNormalize } from './common';
 import { MONSTER_BASE_DETECTION_THRESHOLD, MONSTER_MAX_SPEED } from './config';
+
+export enum PositionType {
+    MY_BASE = 'MY_BASE',
+    MY_BASE_EDGE = 'MY_BASE_EDGE',
+    CENTER = 'CENTER',
+    OUTER_RIM = 'OUTER_RIM',
+}
+
+const mapAreaCenterCoordinatesForTopLeft: { [key in PositionType]: Vector2D[] } = {
+    [PositionType.MY_BASE]: [{ x: 1763, y: 1500 }],
+    [PositionType.MY_BASE_EDGE]: [
+        { x: 5289, y: 1500 },
+        { x: 5289, y: 4500 },
+        { x: 1763, y: 4500 },
+    ],
+    [PositionType.CENTER]: [{ x: 8815, y: 4500 }],
+    [PositionType.OUTER_RIM]: [
+        { x: 8815, y: 1500 },
+        { x: 1763, y: 7500 },
+    ],
+};
+
+const mapAreaCenterCoordinatesForBottomRight: { [key in PositionType]: Vector2D[] } = {
+    [PositionType.MY_BASE]: [{ x: 17630 - 1763, y: 9000 - 1500 }],
+    [PositionType.MY_BASE_EDGE]: [
+        { x: 17630 - 5289, y: 9000 - 1500 },
+        { x: 17630 - 5289, y: 9000 - 4500 },
+        { x: 17630 - 1763, y: 9000 - 4500 },
+    ],
+    [PositionType.CENTER]: [{ x: 8815, y: 4500 }],
+    [PositionType.OUTER_RIM]: [
+        { x: 8815, y: 7500 },
+        { x: 17630 - 1763, y: 1500 },
+    ],
+};
 
 export type EntityAnalyis = { turnsItTakesToDamageBase: number };
 
@@ -9,11 +44,15 @@ export type GameStateAnalysis = {
     players: {
         [PlayerID.ME]: {
             heroIDs: number[];
-            monsterThreateningBaseByDistanceIDs: number[];
+            monsterWanderingIDs: number[];
+            monsterThreateningMyBaseByDistanceIDs: number[];
+            mapAreaCenterCoordinatesGroupedByType: { [key in PositionType]: Vector2D[] };
         };
         [PlayerID.OPPONENT]: {
             heroIDs: number[];
-            monsterThreateningBaseByDistanceIDs: number[];
+            // monsterWanderingIDs: number[];
+            // monsterThreateningMyBaseByDistanceIDs: number[];
+            // mapAreaCenterCoordinatesGroupedByType: { [key in PositionType]: Vector2D[] };
         };
     };
     monsterIDs: number[];
@@ -56,15 +95,27 @@ const getNumOfTurnsItTakesForEntityToDamageBase = ({
 };
 
 export const createGameStateAnalysis = ({ gameState }: { gameState: GameState }): GameStateAnalysis => {
+    const { x: baseX, y: baseY } = gameState.players[PlayerID.ME].baseCoordinates;
+    const amIInTopLeft = baseX === 0 && baseY === 0;
     const gameStateAnalysis: GameStateAnalysis = {
         players: {
             [PlayerID.ME]: {
                 heroIDs: [],
-                monsterThreateningBaseByDistanceIDs: [],
+                monsterWanderingIDs: [],
+                monsterThreateningMyBaseByDistanceIDs: [],
+                mapAreaCenterCoordinatesGroupedByType: amIInTopLeft
+                    ? mapAreaCenterCoordinatesForTopLeft
+                    : mapAreaCenterCoordinatesForBottomRight,
             },
             [PlayerID.OPPONENT]: {
                 heroIDs: [],
-                monsterThreateningBaseByDistanceIDs: [],
+                /*
+               monsterWanderingIDs: [],
+                monsterThreateningMyBaseByDistanceIDs: [],
+                mapAreaCenterCoordinatesGroupedByType: amIInTopLeft
+                    ? mapAreaCenterCoordinatesForBottomRight
+                    : mapAreaCenterCoordinatesForTopLeft,
+                    */
             },
         },
         monsterIDs: [],
@@ -98,7 +149,12 @@ export const createGameStateAnalysis = ({ gameState }: { gameState: GameState })
         }
     });
 
-    gameStateAnalysis.players[PlayerID.ME].monsterThreateningBaseByDistanceIDs = entityIDs
+    gameStateAnalysis.players[PlayerID.ME].monsterWanderingIDs = entityIDs.filter((entityID) => {
+        const { type, threatFor } = gameState.entityMap[entityID];
+        return type === EntityType.MONSTER && threatFor === EntityThreatFor.NEITHER;
+    });
+
+    gameStateAnalysis.players[PlayerID.ME].monsterThreateningMyBaseByDistanceIDs = entityIDs
         .filter((entityID) => {
             const { type, threatFor } = gameState.entityMap[entityID];
             return type === EntityType.MONSTER && threatFor === EntityThreatFor.MY_BASE;
@@ -114,8 +170,13 @@ export const createGameStateAnalysis = ({ gameState }: { gameState: GameState })
             }
             return 0;
         });
+    /*
+    gameStateAnalysis.players[PlayerID.OPPONENT].monsterWanderingIDs = entityIDs.filter((entityID) => {
+        const { type, threatFor } = gameState.entityMap[entityID];
+        return type === EntityType.MONSTER && threatFor === EntityThreatFor.NEITHER;
+    });
 
-    gameStateAnalysis.players[PlayerID.OPPONENT].monsterThreateningBaseByDistanceIDs = entityIDs
+    gameStateAnalysis.players[PlayerID.OPPONENT].monsterThreateningMyBaseByDistanceIDs = entityIDs
         .filter((entityID) => {
             const { type, threatFor } = gameState.entityMap[entityID];
             return type === EntityType.MONSTER && threatFor === EntityThreatFor.OPPONENT_BASE;
@@ -131,6 +192,6 @@ export const createGameStateAnalysis = ({ gameState }: { gameState: GameState })
             }
             return 0;
         });
-
+    */
     return gameStateAnalysis;
 };

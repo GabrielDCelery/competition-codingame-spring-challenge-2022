@@ -3,8 +3,10 @@ import { EntityBase, MovingEntity } from './entity';
 export enum CommandType {
     PAUSE = 'PAUSE',
     WAIT = 'WAIT',
-    MELEE = 'MELEE',
-    CAST_SPELL_WIND = 'CAST_SPELL_WIND',
+    INTERCEPT = 'INTERCEPT',
+    FARM = 'FARM',
+    SPELL_WIND = 'SPELL_WIND',
+    MOVE_TO_AREA = 'MOVE_TO_AREA',
 }
 
 export type Command = {

@@ -23,7 +23,8 @@ export const vector2DNormalize = ({ v }: { v: Vector2D }): Vector2D => {
 export const vector2DDot = ({ v1, v2 }: { v1: Vector2D; v2: Vector2D }): number => {
     const v1N = vector2DNormalize({ v: v1 });
     const v2N = vector2DNormalize({ v: v2 });
-    return Math.acos(v1N.x * v2N.x + v1N.y * v2N.y);
+    return v1N.x * v2N.x + v1N.y * v2N.y;
+    //  return Math.acos(v1N.x * v2N.x + v1N.y * v2N.y);
 };
 
 export const vector2DAdd = ({ v1, v2 }: { v1: Vector2D; v2: Vector2D }): Vector2D => {
@@ -55,4 +56,8 @@ export const vector2DDistancePow = ({ v1, v2 }: { v1: Vector2D; v2: Vector2D }):
 
 export const vector2DDistance = ({ v1, v2 }: { v1: Vector2D; v2: Vector2D }): number => {
     return Math.sqrt(vector2DDistancePow({ v1, v2 }));
+};
+
+export const vectorToKey = ({ v }: { v: Vector2D }): string => {
+    return `${v.x}_${v.y}`;
 };

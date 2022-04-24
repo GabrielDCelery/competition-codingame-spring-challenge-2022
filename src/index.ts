@@ -5,6 +5,7 @@ import { MAP_HEIGHT, MAP_WIDTH } from './config';
 import { pursuitTargetEntityNextPosition } from './common';
 import { heroAI } from './behaviour-tree';
 import { ChosenHeroCommands, CommandType } from './commands';
+import { haveAllMyHeroesBeenAsignedCommands } from './conditions';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const readline: any;
@@ -76,52 +77,46 @@ try {
         const compositeGameState = GS.createCompositeGameState({ oldGameState, newGameState });
         const gameStateAnalysis = GSA.createGameStateAnalysis({ gameState: compositeGameState });
 
-        //  console.error(JSON.stringify(gameStateAnalysis));
-
         const chosenHeroCommands: ChosenHeroCommands = {};
 
-        gameStateAnalysis.players[GS.PlayerID.ME].heroIDs.forEach((heroID) => {
-            return heroAI.execute({
-                heroID,
-                gameState: compositeGameState,
-                gameStateAnalysis,
-                chosenHeroCommands,
-            });
-        });
+        let keepRunningAI = true;
 
-        gameStateAnalysis.players[GS.PlayerID.ME].heroIDs.forEach((heroID) => {
-            return heroAI.execute({
-                heroID,
-                gameState: compositeGameState,
-                gameStateAnalysis,
-                chosenHeroCommands,
+        while (keepRunningAI) {
+            gameStateAnalysis.players[GS.PlayerID.ME].heroIDs.forEach((heroID) => {
+                return heroAI.execute({
+                    heroID,
+                    gameState: compositeGameState,
+                    gameStateAnalysis,
+                    chosenHeroCommands,
+                });
             });
-        });
-
-        gameStateAnalysis.players[GS.PlayerID.ME].heroIDs.forEach((heroID) => {
-            return heroAI.execute({
-                heroID,
-                gameState: compositeGameState,
-                gameStateAnalysis,
-                chosenHeroCommands,
-            });
-        });
-
-        // console.error(JSON.stringify(chosenHeroCommands));
+            keepRunningAI = !haveAllMyHeroesBeenAsignedCommands({ chosenHeroCommands });
+        }
 
         const commands = Object.values(chosenHeroCommands).map((chosenCommand) => {
             switch (chosenCommand.type) {
                 case CommandType.WAIT: {
                     return `WAIT`;
                 }
-                case CommandType.MELEE: {
+                case CommandType.INTERCEPT: {
                     const taretVelocity = pursuitTargetEntityNextPosition({
                         sourceEntity: chosenCommand.source,
                         targetEntity: chosenCommand.target,
                     });
                     return `MOVE ${Math.round(taretVelocity.x)} ${Math.round(taretVelocity.y)}`;
                 }
-                case CommandType.CAST_SPELL_WIND: {
+                case CommandType.FARM: {
+                    const taretVelocity = pursuitTargetEntityNextPosition({
+                        sourceEntity: chosenCommand.source,
+                        targetEntity: chosenCommand.target,
+                    });
+                    return `MOVE ${Math.round(taretVelocity.x)} ${Math.round(taretVelocity.y)}`;
+                }
+                case CommandType.MOVE_TO_AREA: {
+                    const { x, y } = chosenCommand.target.position;
+                    return `MOVE ${Math.round(x)} ${Math.round(y)}`;
+                }
+                case CommandType.SPELL_WIND: {
                     const { x, y } = chosenCommand.target.position;
                     return `SPELL WIND ${Math.round(x)} ${Math.round(y)}`;
                 }
@@ -130,8 +125,6 @@ try {
                 }
             }
         });
-
-        //   console.error(JSON.stringify(commands));
 
         commands.forEach((command) => {
             console.log(command);

@@ -4,7 +4,7 @@ import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../common';
 import { filterDownToUnhandledMonsterIDs } from '../filters';
 
-export class HasUnhandledMonstersThreateningMyBase extends LeafNode {
+export class HasUnhandledMonsters extends LeafNode {
     protected _execute({
         gameState,
         gameStateAnalysis,
@@ -17,14 +17,14 @@ export class HasUnhandledMonstersThreateningMyBase extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const monsterIDsToFilter = gameStateAnalysis.players[PlayerID.ME].monsterThreateningMyBaseByDistanceIDs;
+        const monsterIDsToFilter = gameStateAnalysis.monsterIDs;
         const unhandledMonsterIDs = filterDownToUnhandledMonsterIDs({
             monsterIDsToFilter,
             gameState,
             gameStateAnalysis,
             chosenHeroCommands,
         });
-        localCache.set<number[]>({ key: LocalCacheKey.UNHANDLED_THREATENING_MONSTER_IDS, value: unhandledMonsterIDs });
+        localCache.set<number[]>({ key: LocalCacheKey.UNHANDLED_MONSTER_IDS, value: unhandledMonsterIDs });
         return unhandledMonsterIDs.length > 0;
     }
 }

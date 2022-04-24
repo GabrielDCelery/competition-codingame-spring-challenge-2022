@@ -3,15 +3,15 @@ import { isEntityClosestToTarget } from '../../conditions';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../common';
-import { getMyOtherAvailableHeroIDs } from '../filters';
+import { getClosestEntityID, getMyOtherAvailableHeroIDs } from '../filters';
 
-export class MarkClosestToUnhandledMonsterThreateningMyBaseIfIAmTheClosest extends LeafNode {
+export class MarkClosestAvailableWanderingMonsterForFarmingIfIAmTheClosest extends LeafNode {
     protected _execute({
         heroID,
         gameState,
         gameStateAnalysis,
-        chosenHeroCommands,
         localCache,
+        chosenHeroCommands,
     }: {
         heroID: number;
         gameState: GameState;
@@ -19,19 +19,25 @@ export class MarkClosestToUnhandledMonsterThreateningMyBaseIfIAmTheClosest exten
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const [potentialTargetMonsterID] = localCache.get<number[]>({
-            key: LocalCacheKey.UNHANDLED_THREATENING_MONSTER_IDS,
+        const unhandledWanderingMonsterIDs = localCache.get<number[]>({
+            key: LocalCacheKey.UNHANDLED_FARMABLE_MONSTER_IDS,
+        });
+        const closestFarmableMonsterID = getClosestEntityID({
+            sourceEntity: gameState.entityMap[heroID],
+            targetEntities: unhandledWanderingMonsterIDs.map((monsterID) => {
+                return gameState.entityMap[monsterID];
+            }),
         });
         const otherHeroIDs = getMyOtherAvailableHeroIDs({ heroID, gameStateAnalysis, chosenHeroCommands });
         const amIClosest = isEntityClosestToTarget({
             sourceEntity: gameState.entityMap[heroID],
-            targetEntity: gameState.entityMap[potentialTargetMonsterID],
+            targetEntity: gameState.entityMap[closestFarmableMonsterID],
             otherEntities: otherHeroIDs.map((otherHeroID) => gameState.entityMap[otherHeroID]),
         });
         if (!amIClosest) {
             return false;
         }
-        localCache.set<number>({ key: LocalCacheKey.TARGET_MONSTER_ID, value: potentialTargetMonsterID });
+        localCache.set<number>({ key: LocalCacheKey.TARGET_MONSTER_ID, value: closestFarmableMonsterID });
         return true;
     }
 }

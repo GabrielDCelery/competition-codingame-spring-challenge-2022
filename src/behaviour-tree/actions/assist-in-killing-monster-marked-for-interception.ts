@@ -9,9 +9,7 @@ export class AssistInKillingMonsterMarkedForInterception extends LeafNode {
     protected _execute({
         heroID,
         gameState,
-        gameStateAnalysis,
         chosenHeroCommands,
-        localCache,
     }: {
         heroID: number;
         gameState: GameState;
@@ -25,7 +23,8 @@ export class AssistInKillingMonsterMarkedForInterception extends LeafNode {
                 return;
             }
             const tryingToInterceptMonster =
-                chosenHeroCommand.type === CommandType.MELEE && chosenHeroCommand.target.type === EntityType.MONSTER;
+                chosenHeroCommand.type === CommandType.INTERCEPT &&
+                chosenHeroCommand.target.type === EntityType.MONSTER;
             if (!tryingToInterceptMonster) {
                 return;
             }
@@ -38,7 +37,7 @@ export class AssistInKillingMonsterMarkedForInterception extends LeafNode {
             }),
         });
         chosenHeroCommands[heroID] = {
-            type: CommandType.MELEE,
+            type: CommandType.INTERCEPT,
             source: gameState.entityMap[heroID],
             target: gameState.entityMap[closestMonsterMarkedForInterception],
         };

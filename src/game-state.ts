@@ -1,4 +1,4 @@
-import { getEntityExpectedPosition, Vector2D } from './common';
+import { getEntityExpectedPosition, Vector2D, vector2DSubtract } from './common';
 import { isEntityWithinMapBoundaries, isEntitySeenByBase } from './conditions';
 import { cloneEntity, Entity, EntityType } from './entity';
 
@@ -86,6 +86,23 @@ export const createCompositeGameState = ({
     newGameState: GameState;
 }): GameState => {
     const compositeGameState: GameState = newGameState;
+    const newEntityIDs = Object.keys(compositeGameState.entityMap).map((v) => Number.parseInt(v));
+
+    // sort out incomplete velocity data
+    newEntityIDs.forEach((newEntityID) => {
+        const matchingOldEntity = oldGameState.entityMap[newEntityID];
+        if (!matchingOldEntity) {
+            return;
+        }
+        if (![EntityType.MY_HERO, EntityType.OPPONENT_HERO].includes(matchingOldEntity.type)) {
+            return;
+        }
+        compositeGameState.entityMap[newEntityID].velocity = vector2DSubtract({
+            v1: compositeGameState.entityMap[newEntityID].position,
+            v2: matchingOldEntity.position,
+        });
+    });
+    /*
     const oldEntityIDs = Object.keys(oldGameState.entityMap).map((v) => Number.parseInt(v));
     oldEntityIDs.forEach((oldEntityID) => {
         const entityWasSeenThisTurn = !!compositeGameState.entityMap[oldEntityID];
@@ -103,5 +120,6 @@ export const createCompositeGameState = ({
         }
         compositeGameState.entityMap[oldEntityID] = newEntity;
     });
+    */
     return compositeGameState;
 };

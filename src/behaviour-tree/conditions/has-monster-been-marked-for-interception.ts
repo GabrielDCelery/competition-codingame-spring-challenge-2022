@@ -21,7 +21,10 @@ export class HaveMonstersBeenMarkedForInterception extends LeafNode {
             if (chosenHeroCommand.source.id === heroID) {
                 return;
             }
-            if (chosenHeroCommand.type === CommandType.MELEE && chosenHeroCommand.target.type === EntityType.MONSTER) {
+            if (
+                chosenHeroCommand.type === CommandType.INTERCEPT &&
+                chosenHeroCommand.target.type === EntityType.MONSTER
+            ) {
                 monstersMarkedForInterception.push(chosenHeroCommand.target.id);
             }
         });

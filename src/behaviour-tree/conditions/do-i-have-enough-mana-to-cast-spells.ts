@@ -19,7 +19,7 @@ export class DoIHaveEnoughManaToCastSpells extends LeafNode {
         localCache: LocalCache;
     }): boolean {
         const numOfCommandsAlreadyCastingSpell = Object.values(chosenHeroCommands).filter((chosenHeroCommand) => {
-            return chosenHeroCommand.type === CommandType.CAST_SPELL_WIND;
+            return chosenHeroCommand.type === CommandType.SPELL_WIND;
         }).length;
         const availableMana = gameState.players[PlayerID.ME].mana - numOfCommandsAlreadyCastingSpell * SPELL_MANA_COST;
         return availableMana >= SPELL_MANA_COST;

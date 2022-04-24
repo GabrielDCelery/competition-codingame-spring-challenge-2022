@@ -17,3 +17,6 @@ export const HERO_MELEE_RANGE = 800;
 export const HERO_MELEE_DAMAGE = 2;
 
 export const SPELL_MANA_COST = 10;
+
+export const AREA_WIDTH = 3526;
+export const AREA_HEIGHT = 3000;
