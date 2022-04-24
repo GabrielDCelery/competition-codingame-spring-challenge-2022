@@ -18,7 +18,7 @@ export class MoveToArea extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetPosition = localCache.get<Vector2D>({ key: LocalCacheKey.TARGET_POSITION });
+        const targetPosition = localCache.get<Vector2D>({ key: LocalCacheKey.TARGET_AREA });
         chosenHeroCommands[heroID] = {
             type: CommandType.MOVE_TO_AREA,
             source: gameState.entityMap[heroID],

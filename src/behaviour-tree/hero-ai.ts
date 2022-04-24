@@ -12,20 +12,25 @@ import {
     AmIInMeleeRangeOfTargetMonster,
     CanIDestroyTargetMonsterBeforeItDamagesMyBase,
     DoIHaveEnoughManaToCastSpells,
-    HasNonPatrolledAreas,
+    //   HasNonPatrolledAreas,
     HaveIAlreadyChosenCommand,
     IsTargetMonsterWithinMyBase,
-    MarkClosestNonPatrolledAreaIfIAmTheClosest,
+    // MarkClosestNonPatrolledAreaIfIAmTheClosest,
+    TargetAreaClosestToMe,
     TargetMonsterClosestToBase,
     TargetMonsterClosestToMe,
 } from './conditions';
+import { AmIClosestToTargetArea } from './conditions/am-i-closest-to-target-area';
 import { InverterNode } from './decorators';
 import {
     ClearLocalCache,
     FilterAlreadyTargetedMonsters,
     FilterMonstersWithinFarmingRange,
     GetMonstersThreateningMyBase,
+    GetPatrolAreas,
     GetWanderingMonsters,
+    FilterAreasWithNoKnownMonstersInThem,
+    FilterAlreadyTargetedAreas,
 } from './helpers';
 
 const defendBaseFromMonstersBehaviour = new SequenceNode([
@@ -58,13 +63,12 @@ const farmBehaviour = new SequenceNode([
     ]),
 ]);
 
-const patrolBehaviour = new SequenceNode([
-    //   new InverterNode(new HasUnhandledMonsters()),
-    new HasNonPatrolledAreas(),
-    new SelectNode([
-        new SequenceNode([new MarkClosestNonPatrolledAreaIfIAmTheClosest(), new MoveToArea()]),
-        new Pause(),
-    ]),
+const patrolBehaviourV2 = new SequenceNode([
+    new GetPatrolAreas(),
+    new FilterAlreadyTargetedAreas(),
+    new FilterAreasWithNoKnownMonstersInThem(),
+    new TargetAreaClosestToMe(),
+    new SelectNode([new SequenceNode([new InverterNode(new AmIClosestToTargetArea()), new Pause()]), new MoveToArea()]),
 ]);
 
 const heroAI = new BehaviourTree(
@@ -72,7 +76,7 @@ const heroAI = new BehaviourTree(
         new SequenceNode([new ClearLocalCache(), new HaveIAlreadyChosenCommand()]),
         new SequenceNode([new ClearLocalCache(), defendBaseFromMonstersBehaviour]),
         new SequenceNode([new ClearLocalCache(), farmBehaviour]),
-        new SequenceNode([new ClearLocalCache(), patrolBehaviour]),
+        new SequenceNode([new ClearLocalCache(), patrolBehaviourV2]),
         new SequenceNode([new ClearLocalCache(), new Wait()]),
     ])
 );

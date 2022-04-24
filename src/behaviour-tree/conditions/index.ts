@@ -10,3 +10,5 @@ export * from './is-target-monster-withinmy-base';
 export * from './mark-closest-unpatrolled-area-if-i-am-the-closest';
 export * from './target-monster-closest-to-base';
 export * from './target-monster-closest-to-me';
+export * from './target-area-closest-to-me';
+export * from './am-i-closest-to-target-monster';
