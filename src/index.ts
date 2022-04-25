@@ -1,6 +1,6 @@
 import * as GS from './game-state';
 import * as GSA from './game-state-analysis';
-import { Entity, EntityThreatFor, getMaxSpeedOfEntity } from './entity';
+import { Entity, getMaxSpeedOfEntity } from './entity';
 import { MAP_HEIGHT, MAP_WIDTH } from './config';
 import { pursuitTargetEntityNextPosition } from './common';
 import { heroAI } from './behaviour-tree';
@@ -23,6 +23,7 @@ try {
 
     // game loop
     while (true) {
+        const start = new Date().getTime();
         const newGameState: GS.GameState = GS.createEmptyGameState();
 
         const [myBaseHealth, myMana] = readNextLine()
@@ -51,7 +52,7 @@ try {
 
         GS.setManaForPlayer({ gameState: newGameState, playerID: GS.PlayerID.OPPONENT, mana: opponentMana });
 
-        const entityCount = Number.parseInt(readline()); // Amount of heros and monsters you can see
+        const entityCount = Number.parseInt(readNextLine()); // Amount of heros and monsters you can see
 
         for (let index = 0; index < entityCount; index++) {
             const [id, type, x, y, shieldLife, isControlled, health, vx, vy, nearBase, threatFor] = readNextLine()
@@ -75,7 +76,10 @@ try {
         }
 
         const compositeGameState = GS.createCompositeGameState({ oldGameState, newGameState });
+
         const gameStateAnalysis = GSA.createGameStateAnalysis({ gameState: compositeGameState });
+
+        //   const chosenHeroCommands = generateHeroCommands({ gameState: compositeGameState, gameStateAnalysis });
 
         const chosenHeroCommands: ChosenHeroCommands = {};
 
@@ -94,31 +98,32 @@ try {
         }
 
         const commands = Object.values(chosenHeroCommands).map((chosenCommand) => {
-            switch (chosenCommand.type) {
+            const { type, source, target, role } = chosenCommand;
+            switch (type) {
                 case CommandType.WAIT: {
                     return `WAIT`;
                 }
                 case CommandType.INTERCEPT: {
                     const taretVelocity = pursuitTargetEntityNextPosition({
-                        sourceEntity: chosenCommand.source,
-                        targetEntity: chosenCommand.target,
+                        sourceEntity: source,
+                        targetEntity: target,
                     });
-                    return `MOVE ${Math.round(taretVelocity.x)} ${Math.round(taretVelocity.y)}`;
+                    return `MOVE ${Math.round(taretVelocity.x)} ${Math.round(taretVelocity.y)} ${role}`;
                 }
                 case CommandType.FARM: {
                     const taretVelocity = pursuitTargetEntityNextPosition({
-                        sourceEntity: chosenCommand.source,
-                        targetEntity: chosenCommand.target,
+                        sourceEntity: source,
+                        targetEntity: target,
                     });
-                    return `MOVE ${Math.round(taretVelocity.x)} ${Math.round(taretVelocity.y)}`;
+                    return `MOVE ${Math.round(taretVelocity.x)} ${Math.round(taretVelocity.y)} ${role}`;
                 }
                 case CommandType.MOVE_TO_AREA: {
-                    const { x, y } = chosenCommand.target.position;
-                    return `MOVE ${Math.round(x)} ${Math.round(y)}`;
+                    const { x, y } = target.position;
+                    return `MOVE ${Math.round(x)} ${Math.round(y)} ${role}`;
                 }
                 case CommandType.SPELL_WIND: {
-                    const { x, y } = chosenCommand.target.position;
-                    return `SPELL WIND ${Math.round(x)} ${Math.round(y)}`;
+                    const { x, y } = target.position;
+                    return `SPELL WIND ${Math.round(x)} ${Math.round(y)} ${role}`;
                 }
                 default: {
                     throw new Error('oops');
@@ -126,11 +131,11 @@ try {
             }
         });
 
+        oldGameState = compositeGameState;
+
         commands.forEach((command) => {
             console.log(command);
         });
-
-        oldGameState = compositeGameState;
     }
 } catch (error_) {
     const error = error_ as Error;

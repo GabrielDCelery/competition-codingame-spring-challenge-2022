@@ -167,6 +167,7 @@ export class SelectNode extends CompositeNode {
 }
 
 export enum LocalCacheKey {
+    ROLE = 'ROLE',
     TARGET_MONSTER_IDS = 'TARGET_MONSTER_IDS',
     UNHANDLED_FARMABLE_MONSTER_IDS = 'UNHANDLED_FARMABLE_MONSTER_IDS',
     UNHANDLED_MONSTER_IDS = 'UNHANDLED_MONSTER_IDS',
@@ -192,6 +193,14 @@ export class LocalCache {
         const value = this.cache[key];
         if (value === undefined) {
             throw new Error(`No value in local cache at ${key}`);
+        }
+        return value as T;
+    }
+
+    getOptional<T>({ key }: { key: LocalCacheKey }): T | undefined {
+        const value = this.cache[key];
+        if (value === undefined) {
+            undefined;
         }
         return value as T;
     }

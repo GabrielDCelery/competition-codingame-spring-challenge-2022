@@ -12,6 +12,7 @@ import {
     AmIInMeleeRangeOfTargetMonster,
     CanIDestroyTargetMonsterBeforeItDamagesMyBase,
     DoIHaveEnoughManaToCastSpells,
+    HasEnoughDefenders,
     //   HasNonPatrolledAreas,
     HaveIAlreadyChosenCommand,
     IsTargetMonsterWithinMyBase,
@@ -29,18 +30,21 @@ import {
     GetMonstersThreateningMyBase,
     GetPatrolAreas,
     GetWanderingMonsters,
-    FilterAreasWithNoKnownMonstersInThem,
+    FilterToAreasWithNoMonsters,
     FilterAlreadyTargetedAreas,
     FilterMonstersWithinInterceptRange,
+    SetDefenderRole,
 } from './helpers';
 
 const defendBaseFromMonstersBehaviour = new SequenceNode([
+    new InverterNode(new HasEnoughDefenders()),
     new GetMonstersThreateningMyBase(),
-    new FilterMonstersWithinInterceptRange(),
+    // new FilterMonstersWithinInterceptRange(),
     new FilterAlreadyTargetedMonsters(),
     new TargetMonsterClosestToBase(),
+    new SetDefenderRole(),
     new SelectNode([
-        new SequenceNode([new InverterNode(new AmIClosestToTargetMonster()), new Pause()]),
+        new SequenceNode([new InverterNode(new AmIClosestToTargetMonster()), new ClearLocalCache(), new Pause()]),
         new SequenceNode([
             new IsTargetMonsterWithinMyBase(),
             new AmIInMeleeRangeOfTargetMonster(),
@@ -68,7 +72,7 @@ const farmBehaviour = new SequenceNode([
 const patrolBehaviourV2 = new SequenceNode([
     new GetPatrolAreas(),
     new FilterAlreadyTargetedAreas(),
-    new FilterAreasWithNoKnownMonstersInThem(),
+    new FilterToAreasWithNoMonsters(),
     new TargetAreaClosestToMe(),
     new SelectNode([new SequenceNode([new InverterNode(new AmIClosestToTargetArea()), new Pause()]), new MoveToArea()]),
 ]);

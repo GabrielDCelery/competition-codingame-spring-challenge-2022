@@ -1,8 +1,8 @@
-import { ChosenHeroCommands, CommandType } from '../../commands';
+import { ChosenHeroCommands, CommandRole, CommandType } from '../../commands';
 import { EntityType } from '../../entity';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache } from '../bt-engine';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { getClosestEntityID } from '../filters';
 
 export class AssistInKillingMonsterMarkedForInterception extends LeafNode {
@@ -10,6 +10,7 @@ export class AssistInKillingMonsterMarkedForInterception extends LeafNode {
         heroID,
         gameState,
         chosenHeroCommands,
+        localCache,
     }: {
         heroID: number;
         gameState: GameState;
@@ -37,6 +38,7 @@ export class AssistInKillingMonsterMarkedForInterception extends LeafNode {
             }),
         });
         chosenHeroCommands[heroID] = {
+            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.NO_ROLE,
             type: CommandType.INTERCEPT,
             source: gameState.entityMap[heroID],
             target: gameState.entityMap[closestMonsterMarkedForInterception],

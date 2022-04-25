@@ -6,7 +6,7 @@ import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { getClosestPosition } from '../filters';
 
-export class FilterAreasWithNoKnownMonstersInThem extends LeafNode {
+export class FilterToAreasWithNoMonsters extends LeafNode {
     protected _execute({
         gameState,
         gameStateAnalysis,

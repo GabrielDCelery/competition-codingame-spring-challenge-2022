@@ -12,3 +12,4 @@ export * from './target-monster-closest-to-base';
 export * from './target-monster-closest-to-me';
 export * from './target-area-closest-to-me';
 export * from './am-i-closest-to-target-monster';
+export * from './someone-has-defender-role';

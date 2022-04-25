@@ -1,4 +1,4 @@
-import { ChosenHeroCommands, CommandType } from '../../commands';
+import { ChosenHeroCommands, CommandRole, CommandType } from '../../commands';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
@@ -18,6 +18,7 @@ export class FarmTargetMonster extends LeafNode {
     }): boolean {
         const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
         chosenHeroCommands[heroID] = {
+            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.NO_ROLE,
             type: CommandType.FARM,
             source: gameState.entityMap[heroID],
             target: gameState.entityMap[targetMonsterID],

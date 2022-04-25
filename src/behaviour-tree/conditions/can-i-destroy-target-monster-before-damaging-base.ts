@@ -1,6 +1,7 @@
 import { ChosenHeroCommands } from '../../commands';
-import { HERO_MELEE_DAMAGE } from '../../config';
-import { GameState } from '../../game-state';
+import { vector2DDistance } from '../../common';
+import { HERO_MELEE_DAMAGE, MONSTER_MAX_SPEED } from '../../config';
+import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
@@ -18,8 +19,13 @@ export class CanIDestroyTargetMonsterBeforeItDamagesMyBase extends LeafNode {
     }): boolean {
         const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
         const targetMonster = gameState.entityMap[targetMonsterID];
-        const targetMonsterAnalysis = gameStateAnalysis.entityAnalysisMap[targetMonsterID];
         const turnsItTakesToDestroyMonster = Math.ceil(targetMonster.health / HERO_MELEE_DAMAGE);
-        return targetMonsterAnalysis.turnsItTakesToDamageBase > turnsItTakesToDestroyMonster;
+        const turnsItTakesToDamageBase = Math.floor(
+            vector2DDistance({
+                v1: gameState.entityMap[targetMonsterID].position,
+                v2: gameState.players[PlayerID.ME].baseCoordinates,
+            }) / MONSTER_MAX_SPEED
+        );
+        return turnsItTakesToDamageBase > turnsItTakesToDestroyMonster;
     }
 }

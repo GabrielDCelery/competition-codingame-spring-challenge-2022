@@ -1,6 +1,13 @@
 import { EntityThreatFor, EntityType } from './entity';
 import { GameState, PlayerID } from './game-state';
-import { Vector2D, vector2DAdd, vector2DDistance, vector2DMultiply, vector2DNormalize } from './common';
+import {
+    Vector2D,
+    vector2DAdd,
+    vector2DDistance,
+    vector2DDistancePow,
+    vector2DMultiply,
+    vector2DNormalize,
+} from './common';
 import { MONSTER_BASE_DETECTION_THRESHOLD, MONSTER_MAX_SPEED } from './config';
 
 export enum PositionType {
@@ -49,7 +56,10 @@ const mapAreaCenterCoordinatesForBottomRight: { [key in PositionType]: Vector2D[
     ],
 };
 
-export type EntityAnalyis = { turnsItTakesToDamageBase: number };
+export type EntityAnalyis = {
+    // turnsItTakesToDamageBase: number;
+    distanceFromBasePow: number;
+};
 
 export type GameStateAnalysis = {
     players: {
@@ -84,7 +94,7 @@ const getNumOfTurnsItTakesForEntityToDamageBase = ({
     }
     const targetedPlayerID = threatFor === EntityThreatFor.MY_BASE ? PlayerID.ME : PlayerID.OPPONENT;
     const baseCoordinates = gameState.players[targetedPlayerID].baseCoordinates;
-    const monsterTickSpeed = 100;
+    const monsterTickSpeed = 400;
     const velocity = vector2DMultiply({ v: vector2DNormalize({ v: entity.velocity }), ratio: monsterTickSpeed });
     let numOfTicks = 0;
     let expectedPosition = { x: entity.position.x, y: entity.position.y };
@@ -137,7 +147,11 @@ export const createGameStateAnalysis = ({ gameState }: { gameState: GameState })
 
     entityIDs.forEach((entityID) => {
         gameStateAnalysis.entityAnalysisMap[entityID] = {
-            turnsItTakesToDamageBase: getNumOfTurnsItTakesForEntityToDamageBase({ gameState, entityID }),
+            //   turnsItTakesToDamageBase: getNumOfTurnsItTakesForEntityToDamageBase({ gameState, entityID }),
+            distanceFromBasePow: vector2DDistancePow({
+                v1: gameState.entityMap[entityID].position,
+                v2: gameState.players[PlayerID.ME].baseCoordinates,
+            }),
         };
     });
 
@@ -173,10 +187,10 @@ export const createGameStateAnalysis = ({ gameState }: { gameState: GameState })
         .sort((a, b) => {
             const monsterA = gameStateAnalysis.entityAnalysisMap[a];
             const monsterB = gameStateAnalysis.entityAnalysisMap[b];
-            if (monsterA.turnsItTakesToDamageBase < monsterB.turnsItTakesToDamageBase) {
+            if (monsterA.distanceFromBasePow < monsterB.distanceFromBasePow) {
                 return -1;
             }
-            if (monsterA.turnsItTakesToDamageBase > monsterB.turnsItTakesToDamageBase) {
+            if (monsterA.distanceFromBasePow > monsterB.distanceFromBasePow) {
                 return 1;
             }
             return 0;
