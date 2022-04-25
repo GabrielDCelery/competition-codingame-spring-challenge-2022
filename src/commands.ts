@@ -1,5 +1,9 @@
 import { EntityBase, MovingEntity } from './entity';
 
+export enum CommandRole {
+    DEFENDER = 'DEFENDER',
+}
+
 export enum CommandType {
     PAUSE = 'PAUSE',
     WAIT = 'WAIT',
