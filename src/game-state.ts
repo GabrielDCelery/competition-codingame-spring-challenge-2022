@@ -102,14 +102,18 @@ export const createCompositeGameState = ({
             v2: matchingOldEntity.position,
         });
     });
+
     /*
     const oldEntityIDs = Object.keys(oldGameState.entityMap).map((v) => Number.parseInt(v));
     oldEntityIDs.forEach((oldEntityID) => {
+        const entityLastKnowState = oldGameState.entityMap[oldEntityID];
+        if (entityLastKnowState.type !== EntityType.MONSTER) {
+            return;
+        }
         const entityWasSeenThisTurn = !!compositeGameState.entityMap[oldEntityID];
         if (entityWasSeenThisTurn) {
             return;
         }
-        const entityLastKnowState = oldGameState.entityMap[oldEntityID];
         if (isEntitySeenByBase({ gameState: oldGameState, entity: entityLastKnowState })) {
             return;
         }

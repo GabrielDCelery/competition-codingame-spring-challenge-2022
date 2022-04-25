@@ -21,7 +21,7 @@ export const SPELL_MANA_COST = 10;
 export const AREA_WIDTH = 3526;
 export const AREA_HEIGHT = 3000;
 
-export const FARMING_RANGE = 8000;
-export const INTERCEPT_RANGE = 8000;
+export const FARMING_RANGE = 10000;
+export const INTERCEPT_RANGE = 10000;
 
 export const AREA_RADIUS = 2200;

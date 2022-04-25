@@ -61,7 +61,7 @@ const farmBehaviour = new SequenceNode([
     new TargetMonsterClosestToMe(),
     new SelectNode([
         new SequenceNode([new InverterNode(new AmIClosestToTargetMonster()), new Pause()]),
-        new SequenceNode([new FarmTargetMonster()]),
+        new FarmTargetMonster(),
     ]),
 ]);
 
