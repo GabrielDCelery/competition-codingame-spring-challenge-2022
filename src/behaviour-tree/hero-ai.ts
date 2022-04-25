@@ -11,6 +11,7 @@ import {
     AmIClosestToTargetMonster,
     AmIInMeleeRangeOfTargetMonster,
     CanIDestroyTargetMonsterBeforeItDamagesMyBase,
+    CanIPushTargetMonster,
     DoIHaveEnoughManaToCastSpells,
     HasEnoughDefenders,
     //   HasNonPatrolledAreas,
@@ -22,6 +23,7 @@ import {
     TargetMonsterClosestToMe,
 } from './conditions';
 import { AmIClosestToTargetArea } from './conditions/am-i-closest-to-target-area';
+import { AmIInWindSpellRangeOfTargetMonster } from './conditions/am-i-in-wind-spell-range-of-target-monster';
 import { InverterNode } from './decorators';
 import {
     ClearLocalCache,
@@ -38,22 +40,29 @@ import {
 } from './helpers';
 
 const defendBaseFromMonstersBehaviour = new SequenceNode([
-    new InverterNode(new HasEnoughDefenders()),
+    //  new InverterNode(new HasEnoughDefenders()),
     new GetMonstersThreateningMyBase(),
     // new FilterMonstersWithinInterceptRange(),
     new FilterAlreadyTargetedMonsters(),
     new TargetMonsterClosestToBase(),
     new SetDefenderRole(),
     new SelectNode([
-        new SequenceNode([new InverterNode(new AmIClosestToTargetMonster()), new ClearLocalCache(), new Pause()]),
+        new SequenceNode([new InverterNode(new AmIClosestToTargetMonster()), new Pause()]),
         new SequenceNode([
             new IsTargetMonsterWithinMyBase(),
-            new AmIInMeleeRangeOfTargetMonster(),
+            new DoIHaveEnoughManaToCastSpells(),
+            // new AmIInMeleeRangeOfTargetMonster(),
+            new AmIInWindSpellRangeOfTargetMonster(),
+            new CanIPushTargetMonster(),
+            new PushMonstersOutsideOfMyBase(),
+            /*
+
             new SelectNode([
                 new SequenceNode([new CanIDestroyTargetMonsterBeforeItDamagesMyBase(), new InterceptTargetMonster()]),
                 new SequenceNode([new DoIHaveEnoughManaToCastSpells(), new PushMonstersOutsideOfMyBase()]),
                 new InterceptTargetMonster(),
             ]),
+            */
         ]),
         new InterceptTargetMonster(),
     ]),
