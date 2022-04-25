@@ -31,10 +31,12 @@ import {
     GetWanderingMonsters,
     FilterAreasWithNoKnownMonstersInThem,
     FilterAlreadyTargetedAreas,
+    FilterMonstersWithinInterceptRange,
 } from './helpers';
 
 const defendBaseFromMonstersBehaviour = new SequenceNode([
     new GetMonstersThreateningMyBase(),
+    new FilterMonstersWithinInterceptRange(),
     new FilterAlreadyTargetedMonsters(),
     new TargetMonsterClosestToBase(),
     new SelectNode([
