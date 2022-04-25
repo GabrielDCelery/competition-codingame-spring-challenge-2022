@@ -79,8 +79,6 @@ try {
 
         const gameStateAnalysis = GSA.createGameStateAnalysis({ gameState: compositeGameState });
 
-        //   const chosenHeroCommands = generateHeroCommands({ gameState: compositeGameState, gameStateAnalysis });
-
         const chosenHeroCommands: ChosenHeroCommands = {};
 
         let keepRunningAI = true;

@@ -16,6 +16,7 @@ export enum PositionType {
     CENTER = 'CENTER',
     OUTER_RIM = 'OUTER_RIM',
     PATROL_AREA = 'PATROL_AREA',
+    PATROL_AREA_2 = 'PATROL_AREA_2',
 }
 
 const mapAreaCenterCoordinatesForTopLeft: { [key in PositionType]: Vector2D[] } = {
@@ -35,6 +36,11 @@ const mapAreaCenterCoordinatesForTopLeft: { [key in PositionType]: Vector2D[] } 
         { x: 7000, y: 1400 },
         { x: 5000, y: 5000 },
     ],
+    [PositionType.PATROL_AREA_2]: [
+        { x: 8500, y: 5000 },
+        { x: 10500, y: 1400 },
+        { x: 5500, y: 8000 },
+    ],
 };
 
 const mapAreaCenterCoordinatesForBottomRight: { [key in PositionType]: Vector2D[] } = {
@@ -53,6 +59,11 @@ const mapAreaCenterCoordinatesForBottomRight: { [key in PositionType]: Vector2D[
         { x: 17630 - 1400, y: 9000 - 7000 },
         { x: 17630 - 7000, y: 9000 - 1400 },
         { x: 17630 - 5000, y: 9000 - 5000 },
+    ],
+    [PositionType.PATROL_AREA_2]: [
+        { x: 17630 - 8500, y: 9000 - 5000 },
+        { x: 17630 - 10500, y: 9000 - 1400 },
+        { x: 17630 - 5500, y: 9000 - 8000 },
     ],
 };
 

@@ -21,6 +21,9 @@ export class GetPatrolAreas extends LeafNode {
                 ...gameStateAnalysis.players[PlayerID.ME].mapAreaCenterCoordinatesGroupedByType[
                     PositionType.PATROL_AREA
                 ],
+                ...gameStateAnalysis.players[PlayerID.ME].mapAreaCenterCoordinatesGroupedByType[
+                    PositionType.PATROL_AREA_2
+                ],
             ],
         });
         return true;

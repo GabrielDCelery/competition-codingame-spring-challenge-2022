@@ -34,6 +34,7 @@ import {
     FilterAlreadyTargetedAreas,
     FilterMonstersWithinInterceptRange,
     SetDefenderRole,
+    FilterAreaThatIJustVisited,
 } from './helpers';
 
 const defendBaseFromMonstersBehaviour = new SequenceNode([
@@ -73,6 +74,7 @@ const patrolBehaviourV2 = new SequenceNode([
     new GetPatrolAreas(),
     new FilterAlreadyTargetedAreas(),
     new FilterToAreasWithNoMonsters(),
+    new FilterAreaThatIJustVisited(),
     new TargetAreaClosestToMe(),
     new SelectNode([new SequenceNode([new InverterNode(new AmIClosestToTargetArea()), new Pause()]), new MoveToArea()]),
 ]);
