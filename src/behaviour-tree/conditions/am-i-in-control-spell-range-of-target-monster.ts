@@ -1,12 +1,13 @@
 import { ChosenHeroCommands } from '../../commands';
 import { vector2DDistancePow } from '../../common';
-import { MONSTER_BASE_DETECTION_THRESHOLD } from '../../config';
-import { GameState, PlayerID } from '../../game-state';
+import { HERO_VISION_RANGE } from '../../config';
+import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class IsTargetMonsterWithinMyBase extends LeafNode {
+export class AmIInControlSpellRangeOfTargetMonster extends LeafNode {
     protected _execute({
+        heroID,
         gameState,
         localCache,
     }: {
@@ -17,10 +18,10 @@ export class IsTargetMonsterWithinMyBase extends LeafNode {
         localCache: LocalCache;
     }): boolean {
         const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
-        const monsterDistanceFromBasePow = vector2DDistancePow({
-            v1: gameState.players[PlayerID.ME].baseCoordinates,
+        const distancePow = vector2DDistancePow({
+            v1: gameState.entityMap[heroID].position,
             v2: gameState.entityMap[targetMonsterID].position,
         });
-        return monsterDistanceFromBasePow <= Math.pow(MONSTER_BASE_DETECTION_THRESHOLD, 2);
+        return distancePow <= Math.pow(HERO_VISION_RANGE, 2);
     }
 }

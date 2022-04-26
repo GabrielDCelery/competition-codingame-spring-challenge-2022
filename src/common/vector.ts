@@ -58,6 +58,14 @@ export const vector2DDistance = ({ v1, v2 }: { v1: Vector2D; v2: Vector2D }): nu
     return Math.sqrt(vector2DDistancePow({ v1, v2 }));
 };
 
+export const vector2DClockwise = ({ v }: { v: Vector2D }): Vector2D => {
+    return { x: -1 * v.y, y: v.x };
+};
+
+export const vector2DCounterClockwise = ({ v }: { v: Vector2D }): Vector2D => {
+    return { x: v.y, y: -1 * v.x };
+};
+
 export const vectorToKey = ({ v }: { v: Vector2D }): string => {
     return `${v.x}_${v.y}`;
 };

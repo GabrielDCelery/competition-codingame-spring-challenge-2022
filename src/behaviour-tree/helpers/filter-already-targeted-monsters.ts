@@ -48,6 +48,11 @@ export class FilterAlreadyTargetedMonsters extends LeafNode {
                     monstersAlreadyBeingDealtWith[monster.id] = true;
                 });
             }
+
+            if (chosenHeroCommand.type === CommandType.SPELL_CONTROL) {
+                monstersAlreadyBeingDealtWith[chosenHeroCommand.target.id] = true;
+                return;
+            }
         });
 
         const filteredMonsterIDs = monsterIDsToFilter.filter((monsterID) => {

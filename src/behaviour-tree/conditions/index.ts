@@ -14,3 +14,5 @@ export * from './target-area-closest-to-me';
 export * from './am-i-closest-to-target-monster';
 export * from './someone-has-defender-role';
 export * from './can-i-push-target-monster';
+export * from './can-i-see-enemy-hero';
+export * from './do-i-have-shield';

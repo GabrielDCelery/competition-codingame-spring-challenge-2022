@@ -15,6 +15,8 @@ export enum CommandType {
     FARM = 'FARM',
     SPELL_WIND = 'SPELL_WIND',
     MOVE_TO_AREA = 'MOVE_TO_AREA',
+    SPELL_SHIELD = 'SPELL_SHIELD',
+    SPELL_CONTROL = 'SPELL_CONTROL',
 }
 
 export type Command = {

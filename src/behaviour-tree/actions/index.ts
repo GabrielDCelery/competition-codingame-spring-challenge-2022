@@ -5,3 +5,5 @@ export * from './move-to-area';
 export * from './pause';
 export * from './push-monsters-outside-of-base';
 export * from './wait';
+export * from './shield-myself';
+export * from './redirect-monster-from-my-base';

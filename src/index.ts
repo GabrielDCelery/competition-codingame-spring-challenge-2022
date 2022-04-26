@@ -123,6 +123,16 @@ try {
                     const { x, y } = target.position;
                     return `SPELL WIND ${Math.round(x)} ${Math.round(y)} ${role}`;
                 }
+                case CommandType.SPELL_SHIELD: {
+                    return `SPELL SHIELD ${target.id} ${role}`;
+                }
+                case CommandType.SPELL_CONTROL: {
+                    const {
+                        id,
+                        position: { x, y },
+                    } = target;
+                    return `SPELL CONTROL ${id} ${Math.round(x)} ${Math.round(y)} ${role}`;
+                }
                 default: {
                     throw new Error('oops');
                 }
