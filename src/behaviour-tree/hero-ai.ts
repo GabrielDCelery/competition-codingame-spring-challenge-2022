@@ -13,9 +13,7 @@ import { BehaviourTree, SelectNode, SequenceNode } from './bt-engine';
 import {
     AmIClosestToTargetEnemyHero,
     AmIClosestToTargetMonster,
-    AmIInMeleeRangeOfTargetMonster,
     AmIInWindSpellRangeOfTargetEnemyHero,
-    CanIDestroyTargetMonsterBeforeItDamagesMyBase,
     CanIPushTargetEnemyHero,
     CanIPushTargetMonster,
     CanISeeEnemyHero,
@@ -24,12 +22,8 @@ import {
     HasEnoughDefenders,
     HasEnoughInterceptors,
     HasEnoughManaInEmergencyPool,
-    HasReachedMaximumNumberOfDefenders,
-    HasReachedMaximumNumberOfInterceptors,
-    //   HasNonPatrolledAreas,
     HaveIAlreadyChosenCommand,
     IsTargetMonsterWithinMyBase,
-    // MarkClosestNonPatrolledAreaIfIAmTheClosest,
     TargetAreaClosestToMe,
     TargetEnemyHeroClosestToBase,
     TargetMonsterClosestToBase,
@@ -60,7 +54,6 @@ import { GetEnemyHeroesNearMyBase } from './helpers/get-enemy-heroes-near-my-bas
 
 const defendBaseFromMonstersBehaviour = new SequenceNode([
     new GetMonstersThreateningMyBase(),
-    // new FilterMonstersWithinInterceptRange(),
     new FilterAlreadyTargetedMonsters(),
     new InverterNode(new HasEnoughDefenders()),
     new TargetMonsterClosestToBase(),
@@ -110,7 +103,6 @@ const shieldMyselfBehaviour = new SequenceNode([
     new CanISeeEnemyHero(),
     new InverterNode(new DoIHaveShield()),
     new HasEnoughManaInEmergencyPool(),
-    // new DoIHaveEnoughManaToCastSpells(),
     new SheildMyself(),
 ]);
 
