@@ -1,5 +1,5 @@
 import { ChosenHeroCommands } from '../../commands';
-import { vector2DDistancePow } from '../../common';
+import { vector2DAdd, vector2DDistancePow } from '../../common';
 import { MONSTER_BASE_DETECTION_THRESHOLD } from '../../config';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
@@ -17,9 +17,14 @@ export class IsTargetMonsterWithinMyBase extends LeafNode {
         localCache: LocalCache;
     }): boolean {
         const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
+        const expectedPosition = vector2DAdd({
+            v1: gameState.entityMap[targetMonsterID].position,
+            v2: gameState.entityMap[targetMonsterID].velocity,
+        });
         const monsterDistanceFromBasePow = vector2DDistancePow({
             v1: gameState.players[PlayerID.ME].baseCoordinates,
-            v2: gameState.entityMap[targetMonsterID].position,
+            //   v2: gameState.entityMap[targetMonsterID].position,
+            v2: expectedPosition,
         });
         return monsterDistanceFromBasePow <= Math.pow(MONSTER_BASE_DETECTION_THRESHOLD, 2);
     }

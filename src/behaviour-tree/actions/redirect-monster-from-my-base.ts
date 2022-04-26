@@ -20,27 +20,29 @@ export class RedirectMonsterFromMyBase extends LeafNode {
         localCache: LocalCache;
     }): boolean {
         const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
-        const vectorPointingToMonster = vector2DNormalize({
-            v: vector2DSubtract({
-                v1: gameState.entityMap[targetMonsterID].position,
-                v2: gameState.players[PlayerID.ME].baseCoordinates,
-            }),
-        });
 
-        console.error(targetMonsterID);
-
-        console.error(vectorPointingToMonster);
-
-        const redirectVelocity = vector2DClockwise({ v: vectorPointingToMonster });
-        console.error(redirectVelocity);
-        const scaledRedirectVelocity = vector2DMultiply({ v: redirectVelocity, ratio: MONSTER_MAX_SPEED });
-        console.error(scaledRedirectVelocity);
-        const redirectMonsterTo = vector2DAdd({
+        const expectedPosition = vector2DAdd({
             v1: gameState.entityMap[targetMonsterID].position,
-            v2: scaledRedirectVelocity,
+            v2: gameState.entityMap[targetMonsterID].velocity,
         });
-        console.error(gameState.entityMap[targetMonsterID].position);
-        console.error(redirectMonsterTo);
+
+        const vectorPointingToMonster = vector2DSubtract({
+            v1: expectedPosition,
+            v2: gameState.players[PlayerID.ME].baseCoordinates,
+        });
+
+        const vectorPointingToMonsterNorm = vector2DNormalize({ v: vectorPointingToMonster });
+        const vectorPointingToMonsterNormScaled = vector2DMultiply({
+            v: vectorPointingToMonsterNorm,
+            ratio: MONSTER_MAX_SPEED,
+        });
+
+        const redirectVelocity = vector2DClockwise({ v: vectorPointingToMonsterNormScaled });
+
+        const redirectMonsterTo = vector2DAdd({
+            v1: expectedPosition,
+            v2: redirectVelocity,
+        });
 
         chosenHeroCommands[heroID] = {
             role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.NO_ROLE,
@@ -51,7 +53,7 @@ export class RedirectMonsterFromMyBase extends LeafNode {
                 type: EntityType.MONSTER,
                 maxSpeed: MONSTER_MAX_SPEED,
                 position: redirectMonsterTo,
-                velocity: scaledRedirectVelocity,
+                velocity: redirectVelocity,
             },
         };
         return true;
