@@ -7,3 +7,4 @@ export * from './wait';
 export * from './shield-myself';
 export * from './redirect-monster-from-my-base';
 export * from './intercept-target-enemy-hero';
+export * from './direct-away-entity-from-my-base';

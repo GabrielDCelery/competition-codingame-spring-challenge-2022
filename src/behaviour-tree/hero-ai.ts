@@ -1,4 +1,8 @@
+import { HeroRole } from '../commands';
+import { HERO_MAX_SPEED, HERO_VISION_RANGE, MAX_ALLOWED_NUM_OF_INTERCEPTORS, WIND_SPELL_CAST_RANGE } from '../config';
+import { EntityType } from '../entity';
 import {
+    DirectEntityAwayFromMyBase,
     FarmTargetMonster,
     InterceptTargetEnemyHero,
     InterceptTargetMonster,
@@ -11,23 +15,22 @@ import {
 } from './actions';
 import { BehaviourTree, SelectNode, SequenceNode } from './bt-engine';
 import {
-    AmIClosestToTargetEnemyHero,
     AmIClosestToTargetMonster,
-    AmIInWindSpellRangeOfTargetEnemyHero,
-    CanIPushTargetEnemyHero,
+    IsTargetEntityWithinRangeOfHero,
+    IsTargetEntityShielded,
     CanIPushTargetMonster,
     CanISeeEnemyHero,
-    DoIHaveEnoughManaToCastSpells,
     DoIHaveShield,
     HasEnoughDefenders,
-    HasEnoughInterceptors,
-    HasEnoughManaInEmergencyPool,
+    HasEnoughHeroesAssumingRole,
+    HasEnoughMana,
     HaveIAlreadyChosenCommand,
     IsTargetMonsterWithinMyBase,
     TargetAreaClosestToMe,
-    TargetEnemyHeroClosestToBase,
+    TargetEntityClosestToMyBase,
     TargetMonsterClosestToBase,
     TargetMonsterClosestToMe,
+    AmIClosestToTargetEntity,
 } from './conditions';
 import { AmIClosestToTargetArea } from './conditions/am-i-closest-to-target-area';
 import { AmIInControlSpellRangeOfTargetMonster } from './conditions/am-i-in-control-spell-range-of-target-monster';
@@ -47,9 +50,9 @@ import {
     FilterAlreadyTargetedAreas,
     SetDefenderRole,
     FilterAreaThatIJustVisited,
-    SetInterceptorRole,
+    SetHeroRole,
 } from './helpers';
-import { FilterAlreadyTargetedHeroes } from './helpers/filter-already-targeted-heroes';
+import { FilterAlreadyTargetedEntities } from './helpers/filter-already-targeted-entities';
 import { GetEnemyHeroesNearMyBase } from './helpers/get-enemy-heroes-near-my-base';
 
 const defendBaseFromMonstersBehaviour = new SequenceNode([
@@ -61,14 +64,14 @@ const defendBaseFromMonstersBehaviour = new SequenceNode([
     new SelectNode([
         new SequenceNode([new InverterNode(new AmIClosestToTargetMonster()), new Pause()]),
         new SequenceNode([
-            new DoIHaveEnoughManaToCastSpells(),
+            new HasEnoughMana({ reserve: 0 }),
             new IsTargetMonsterWithinMyBase(),
             new AmIInWindSpellRangeOfTargetMonster(),
             new CanIPushTargetMonster(),
             new PushMonstersOutsideOfMyBase(),
         ]),
         new SequenceNode([
-            new DoIHaveEnoughManaToCastSpells(),
+            new HasEnoughMana({ reserve: 0 }),
             new InverterNode(new IsTargetMonsterWithinMyBase()),
             new IsTargetMonsterNearMyBase(),
             new AmIInControlSpellRangeOfTargetMonster(),
@@ -102,32 +105,42 @@ const patrolBehaviourV2 = new SequenceNode([
 const shieldMyselfBehaviour = new SequenceNode([
     new CanISeeEnemyHero(),
     new InverterNode(new DoIHaveShield()),
-    new HasEnoughManaInEmergencyPool(),
+    new HasEnoughMana({ reserve: 50 }),
     new SheildMyself(),
 ]);
 
 const interceptEnemyHeroBehaviour = new SequenceNode([
-    new HasEnoughManaInEmergencyPool(),
+    new HasEnoughMana({ reserve: 50 }),
     new GetEnemyHeroesNearMyBase(),
-    new FilterAlreadyTargetedHeroes(),
-    new InverterNode(new HasEnoughInterceptors()),
-    new TargetEnemyHeroClosestToBase(),
-    new SetInterceptorRole(),
+    new FilterAlreadyTargetedEntities(),
+    new InverterNode(
+        new HasEnoughHeroesAssumingRole({ role: HeroRole.INTERCEPTOR, maxAllowed: MAX_ALLOWED_NUM_OF_INTERCEPTORS })
+    ),
+    new TargetEntityClosestToMyBase(),
+    new SetHeroRole({ role: HeroRole.INTERCEPTOR }),
     new SelectNode([
-        new SequenceNode([new InverterNode(new AmIClosestToTargetEnemyHero()), new Pause()]),
+        new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
         new SequenceNode([
-            new DoIHaveEnoughManaToCastSpells(),
-            new AmIInWindSpellRangeOfTargetEnemyHero(),
-            new CanIPushTargetEnemyHero(),
+            new HasEnoughMana({ reserve: 0 }),
+            new InverterNode(new IsTargetEntityShielded()),
+            new IsTargetEntityWithinRangeOfHero({ distance: WIND_SPELL_CAST_RANGE }),
             new PushMonstersOutsideOfMyBase(),
+        ]),
+        new SequenceNode([
+            new HasEnoughMana({ reserve: 0 }),
+            new InverterNode(new IsTargetEntityShielded()),
+            new IsTargetEntityWithinRangeOfHero({ distance: HERO_VISION_RANGE }),
+            new InverterNode(new IsTargetEntityWithinRangeOfHero({ distance: WIND_SPELL_CAST_RANGE })),
+            new DirectEntityAwayFromMyBase({ entityType: EntityType.OPPONENT_HERO, entitySpeed: HERO_MAX_SPEED }),
         ]),
         new InterceptTargetEnemyHero(),
     ]),
 ]);
+
 const heroAI = new BehaviourTree(
     new SelectNode([
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), new HaveIAlreadyChosenCommand()])),
-        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), shieldMyselfBehaviour])),
+        //  new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), shieldMyselfBehaviour])),
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), defendBaseFromMonstersBehaviour])),
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), interceptEnemyHeroBehaviour])),
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), farmBehaviour])),

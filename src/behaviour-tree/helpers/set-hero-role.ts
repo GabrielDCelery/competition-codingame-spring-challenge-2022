@@ -1,11 +1,17 @@
-import { ChosenHeroCommands } from '../../commands';
+import { ChosenHeroCommands, HeroRole } from '../../commands';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class CanIPushTargetEnemyHero extends LeafNode {
+export class SetHeroRole extends LeafNode {
+    readonly role: HeroRole;
+
+    constructor({ role }: { role: HeroRole }) {
+        super();
+        this.role = role;
+    }
+
     protected _execute({
-        gameState,
         localCache,
     }: {
         heroID: number;
@@ -14,7 +20,7 @@ export class CanIPushTargetEnemyHero extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENEMY_HERO_ID });
-        return gameState.entityMap[targetMonsterID].shieldLife === 0;
+        localCache.set<HeroRole>({ key: LocalCacheKey.ROLE, value: HeroRole.INTERCEPTOR });
+        return true;
     }
 }

@@ -1,4 +1,4 @@
-import { ChosenHeroCommands, CommandRole } from '../../commands';
+import { ChosenHeroCommands, HeroRole } from '../../commands';
 import { EntityControlled } from '../../entity';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
@@ -24,7 +24,7 @@ export class HasEnoughDefenders extends LeafNode {
             return gameState.entityMap[heroID].isControlled !== EntityControlled.IS_CONTROLLED;
         }).length;
         const numOfDefenders = Object.values(chosenHeroCommands).filter((chosenHeroCommand) => {
-            return chosenHeroCommand.role === CommandRole.DEFENDER;
+            return chosenHeroCommand.role === HeroRole.DEFENDER;
         }).length;
         const numOfDefendersNeeded = Math.min(availableNumberOfDefenders, numOfMonstersINeedToDealWith);
         return numOfDefenders >= numOfDefendersNeeded && numOfDefenders <= 2;

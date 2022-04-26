@@ -8,4 +8,4 @@ export * from './filter-to-areas-with-no-monsters';
 export * from './filter-already-targeted-areas';
 export * from './set-defender-role';
 export * from './filter-area-that-i-just-visited';
-export * from './set-interceptor-role';
+export * from './set-hero-role';

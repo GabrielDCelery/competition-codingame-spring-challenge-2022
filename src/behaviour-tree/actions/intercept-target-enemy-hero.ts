@@ -1,4 +1,4 @@
-import { ChosenHeroCommands, CommandRole, CommandType } from '../../commands';
+import { ChosenHeroCommands, HeroRole, CommandType } from '../../commands';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
@@ -16,9 +16,9 @@ export class InterceptTargetEnemyHero extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetEnemyHeroID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENEMY_HERO_ID });
+        const targetEnemyHeroID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
         chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.GRUNT,
+            role: localCache.getOptional<HeroRole>({ key: LocalCacheKey.ROLE }) || HeroRole.GRUNT,
             type: CommandType.INTERCEPT,
             source: gameState.entityMap[heroID],
             target: gameState.entityMap[targetEnemyHeroID],

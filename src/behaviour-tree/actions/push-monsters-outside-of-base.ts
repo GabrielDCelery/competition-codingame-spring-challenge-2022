@@ -1,4 +1,4 @@
-import { ChosenHeroCommands, CommandRole, CommandType } from '../../commands';
+import { ChosenHeroCommands, HeroRole, CommandType } from '../../commands';
 import { vector2DAdd, vector2DMultiply, vector2DNormalize, vector2DSubtract } from '../../common';
 import { WIND_SPELL_POWER_RANGE } from '../../config';
 import { EntityType } from '../../entity';
@@ -34,7 +34,7 @@ export class PushMonstersOutsideOfMyBase extends LeafNode {
             });
 
             chosenHeroCommands[heroID] = {
-                role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.GRUNT,
+                role: localCache.getOptional<HeroRole>({ key: LocalCacheKey.ROLE }) || HeroRole.GRUNT,
                 type: CommandType.SPELL_WIND,
                 source: gameState.entityMap[heroID],
                 target: {

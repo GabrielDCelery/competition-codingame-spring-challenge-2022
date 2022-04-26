@@ -17,21 +17,16 @@ export class GetEnemyHeroesNearMyBase extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        try {
-            const enemyHeroesNearMyBase = gameStateAnalysis.players[PlayerID.OPPONENT].heroIDs.filter((heroID) => {
-                return (
-                    vector2DDistancePow({
-                        v1: gameState.entityMap[heroID].position,
-                        v2: gameState.players[PlayerID.ME].baseCoordinates,
-                    }) <= Math.pow(INTERCEPT_ENEMY_HERO_RANGE, 2)
-                );
-            });
+        const enemyHeroesNearMyBase = gameStateAnalysis.players[PlayerID.OPPONENT].heroIDs.filter((heroID) => {
+            return (
+                vector2DDistancePow({
+                    v1: gameState.entityMap[heroID].position,
+                    v2: gameState.players[PlayerID.ME].baseCoordinates,
+                }) <= Math.pow(INTERCEPT_ENEMY_HERO_RANGE, 2)
+            );
+        });
 
-            localCache.set<number[]>({ key: LocalCacheKey.TARGET_ENEMY_HERO_IDS, value: enemyHeroesNearMyBase });
-            return true;
-        } catch (error_) {
-            console.error(`GetEnemyHeroesNearMyBase`);
-            throw new Error(`GetEnemyHeroesNearMyBase`);
-        }
+        localCache.set<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS, value: enemyHeroesNearMyBase });
+        return true;
     }
 }

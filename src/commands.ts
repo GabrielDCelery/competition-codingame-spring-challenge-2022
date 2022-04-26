@@ -1,6 +1,6 @@
 import { EntityBase, MovingEntity } from './entity';
 
-export enum CommandRole {
+export enum HeroRole {
     GRUNT = 'GRUNT',
     DEFENDER = 'DEFENDER',
     INTERCEPTOR = 'INTERCEPTOR',
@@ -17,14 +17,14 @@ export enum CommandType {
     SPELL_CONTROL = 'SPELL_CONTROL',
 }
 
-export type Command = {
-    role: CommandRole;
+export type HeroCommand = {
+    role: HeroRole;
     type: CommandType;
     source: EntityBase & MovingEntity;
     target: EntityBase & MovingEntity;
 };
 
-export type ChosenHeroCommands = { [index: number]: Command };
+export type ChosenHeroCommands = { [index: number]: HeroCommand };
 /*
 export const haveAllMyHeroesBeenAsignedCommands = ({
     chosenHeroCommands,

@@ -1,4 +1,4 @@
-import { ChosenHeroCommands, CommandRole, CommandType } from '../../commands';
+import { ChosenHeroCommands, HeroRole, CommandType } from '../../commands';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
@@ -18,7 +18,7 @@ export class Pause extends LeafNode {
     }): boolean {
         const { id, position, velocity, maxSpeed, type } = gameState.entityMap[heroID];
         chosenHeroCommands[heroID] = {
-            role: CommandRole.GRUNT,
+            role: HeroRole.GRUNT,
             type: CommandType.PAUSE,
             source: { id, type, position, velocity, maxSpeed },
             target: { id, type, position, velocity, maxSpeed },

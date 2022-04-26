@@ -1,4 +1,4 @@
-import { ChosenHeroCommands, CommandRole, CommandType } from '../../commands';
+import { ChosenHeroCommands, HeroRole, CommandType } from '../../commands';
 import { Vector2D } from '../../common';
 import { EntityType } from '../../entity';
 import { GameState } from '../../game-state';
@@ -20,7 +20,7 @@ export class MoveToArea extends LeafNode {
     }): boolean {
         const targetPosition = localCache.get<Vector2D>({ key: LocalCacheKey.TARGET_AREA });
         chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.GRUNT,
+            role: localCache.getOptional<HeroRole>({ key: LocalCacheKey.ROLE }) || HeroRole.GRUNT,
             type: CommandType.MOVE_TO_AREA,
             source: gameState.entityMap[heroID],
             target: {

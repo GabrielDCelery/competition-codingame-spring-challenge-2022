@@ -1,4 +1,4 @@
-import { ChosenHeroCommands, CommandRole, CommandType } from '../../commands';
+import { ChosenHeroCommands, HeroRole, CommandType } from '../../commands';
 import {
     vector2DAdd,
     vector2DClockwise,
@@ -8,7 +8,7 @@ import {
     vector2DNormalize,
     vector2DSubtract,
 } from '../../common';
-import { MAP_WIDTH, MONSTER_MAX_SPEED, WIND_SPELL_POWER_RANGE } from '../../config';
+import { MONSTER_MAX_SPEED } from '../../config';
 import { EntityType } from '../../entity';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
@@ -69,7 +69,7 @@ export class RedirectMonsterFromMyBase extends LeafNode {
         });
 
         chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.GRUNT,
+            role: localCache.getOptional<HeroRole>({ key: LocalCacheKey.ROLE }) || HeroRole.GRUNT,
             type: CommandType.SPELL_CONTROL,
             source: gameState.entityMap[heroID],
             target: {

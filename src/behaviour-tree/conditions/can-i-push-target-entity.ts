@@ -1,10 +1,11 @@
-import { ChosenHeroCommands, CommandRole } from '../../commands';
+import { ChosenHeroCommands } from '../../commands';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class SetInterceptorRole extends LeafNode {
+export class IsTargetEntityShielded extends LeafNode {
     protected _execute({
+        gameState,
         localCache,
     }: {
         heroID: number;
@@ -13,7 +14,7 @@ export class SetInterceptorRole extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        localCache.set<CommandRole>({ key: LocalCacheKey.ROLE, value: CommandRole.INTERCEPTOR });
-        return true;
+        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
+        return gameState.entityMap[targetMonsterID].shieldLife > 0;
     }
 }
