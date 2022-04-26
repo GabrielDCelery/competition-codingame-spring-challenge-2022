@@ -14,7 +14,7 @@ export class CanIPushTargetMonster extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
+        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
         return gameState.entityMap[targetMonsterID].shieldLife === 0;
     }
 }

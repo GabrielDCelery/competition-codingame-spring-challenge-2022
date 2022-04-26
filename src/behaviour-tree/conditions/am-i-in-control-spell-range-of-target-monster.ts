@@ -17,7 +17,7 @@ export class AmIInControlSpellRangeOfTargetMonster extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
+        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
         const distancePow = vector2DDistancePow({
             v1: gameState.entityMap[heroID].position,
             v2: gameState.entityMap[targetMonsterID].position,

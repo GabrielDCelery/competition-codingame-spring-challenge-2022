@@ -15,7 +15,7 @@ export class CanIControlTargetMonster extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
+        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
         const hasNoShield = gameState.entityMap[targetMonsterID].shieldLife === 0;
         const notControllingMonster = !Object.values(chosenHeroCommands).find((chosenHeroCommand) => {
             return (

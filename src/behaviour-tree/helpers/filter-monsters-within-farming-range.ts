@@ -16,7 +16,7 @@ export class FilterMonstersWithinFarmingRange extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const monsterIDsToFilter = localCache.get<number[]>({ key: LocalCacheKey.TARGET_MONSTER_IDS });
+        const monsterIDsToFilter = localCache.get<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS });
         const monsterIDsWithinRange = monsterIDsToFilter.filter((targetMonsterID) => {
             return (
                 vector2DDistancePow({
@@ -25,7 +25,7 @@ export class FilterMonstersWithinFarmingRange extends LeafNode {
                 }) <= Math.pow(FARMING_RANGE, 2)
             );
         });
-        localCache.set<number[]>({ key: LocalCacheKey.TARGET_MONSTER_IDS, value: monsterIDsWithinRange });
+        localCache.set<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS, value: monsterIDsWithinRange });
         return true;
     }
 }

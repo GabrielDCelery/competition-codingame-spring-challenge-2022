@@ -16,7 +16,7 @@ export class TargetMonsterClosestToMe extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterIDs = localCache.get<number[]>({ key: LocalCacheKey.TARGET_MONSTER_IDS });
+        const targetMonsterIDs = localCache.get<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS });
         if (targetMonsterIDs.length === 0) {
             return false;
         }
@@ -24,7 +24,7 @@ export class TargetMonsterClosestToMe extends LeafNode {
             sourceEntity: gameState.entityMap[heroID],
             targetEntities: targetMonsterIDs.map((monsterID) => gameState.entityMap[monsterID]),
         });
-        localCache.set<number>({ key: LocalCacheKey.TARGET_MONSTER_ID, value: closestFarmableMonsterID });
+        localCache.set<number>({ key: LocalCacheKey.TARGET_ENTITY_ID, value: closestFarmableMonsterID });
         return true;
     }
 }

@@ -13,11 +13,11 @@ export class TargetMonsterClosestToBase extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterIDs = localCache.get<number[]>({ key: LocalCacheKey.TARGET_MONSTER_IDS });
+        const targetMonsterIDs = localCache.get<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS });
         if (targetMonsterIDs.length === 0) {
             return false;
         }
-        localCache.set<number>({ key: LocalCacheKey.TARGET_MONSTER_ID, value: targetMonsterIDs[0] });
+        localCache.set<number>({ key: LocalCacheKey.TARGET_ENTITY_ID, value: targetMonsterIDs[0] });
         return true;
     }
 }

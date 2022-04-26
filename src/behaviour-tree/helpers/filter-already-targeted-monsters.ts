@@ -19,7 +19,7 @@ export class FilterAlreadyTargetedMonsters extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const monsterIDsToFilter = localCache.get<number[]>({ key: LocalCacheKey.TARGET_MONSTER_IDS });
+        const monsterIDsToFilter = localCache.get<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS });
 
         const monstersAlreadyBeingDealtWith: { [index: number]: true } = {};
 
@@ -59,7 +59,7 @@ export class FilterAlreadyTargetedMonsters extends LeafNode {
             return !monstersAlreadyBeingDealtWith[monsterID];
         });
 
-        localCache.set<number[]>({ key: LocalCacheKey.TARGET_MONSTER_IDS, value: filteredMonsterIDs });
+        localCache.set<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS, value: filteredMonsterIDs });
 
         return true;
     }

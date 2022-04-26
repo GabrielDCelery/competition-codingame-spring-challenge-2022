@@ -16,7 +16,7 @@ export class IsTargetMonsterWithinMyBase extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
+        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
         const expectedPosition = vector2DAdd({
             v1: gameState.entityMap[targetMonsterID].position,
             v2: gameState.entityMap[targetMonsterID].velocity,

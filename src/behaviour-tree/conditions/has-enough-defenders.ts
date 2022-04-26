@@ -18,7 +18,7 @@ export class HasEnoughDefenders extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterIDs = localCache.get<number[]>({ key: LocalCacheKey.TARGET_MONSTER_IDS });
+        const targetMonsterIDs = localCache.get<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS });
         const numOfMonstersINeedToDealWith = targetMonsterIDs.length;
         const availableNumberOfDefenders = gameStateAnalysis.players[PlayerID.ME].heroIDs.filter((heroID) => {
             return gameState.entityMap[heroID].isControlled !== EntityControlled.IS_CONTROLLED;

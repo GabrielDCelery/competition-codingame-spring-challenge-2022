@@ -16,7 +16,7 @@ export class IsTargetMonsterNearMyBase extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
+        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
         const monsterDistanceFromBasePow = vector2DDistancePow({
             v1: gameState.players[PlayerID.ME].baseCoordinates,
             v2: gameState.entityMap[targetMonsterID].position,

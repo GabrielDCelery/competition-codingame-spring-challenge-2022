@@ -15,7 +15,7 @@ export class GetMonstersThreateningMyBase extends LeafNode {
         localCache: LocalCache;
     }): boolean {
         localCache.set<number[]>({
-            key: LocalCacheKey.TARGET_MONSTER_IDS,
+            key: LocalCacheKey.TARGET_ENTITY_IDS,
             value: gameStateAnalysis.players[PlayerID.ME].monsterThreateningMyBaseByDistanceIDs,
         });
         return true;
