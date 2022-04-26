@@ -8,7 +8,7 @@ export * from './have-i-already-chosen-command';
 export * from './have-monsters-been-marked-for-interception';
 export * from './is-target-entity-controlled';
 export * from './is-target-entity-within-range-of-my-hero';
-export * from './is-target-monster-within-my-base';
+export * from './is-target-entity-expected-to-move-into-range-of-my-base';
 export * from './target-area-closest-to-me';
 export * from './target-entity-closest-to-my-base';
 export * from './target-entity-closest-to-my-hero';
