@@ -4,7 +4,7 @@ import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { getClosestEntityID } from '../filters';
 
-export class TargetMonsterClosestToMe extends LeafNode {
+export class TargetEntityClosestToMyHero extends LeafNode {
     protected _execute({
         heroID,
         gameState,

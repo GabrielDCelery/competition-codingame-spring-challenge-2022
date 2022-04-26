@@ -1,10 +1,12 @@
-import { ChosenHeroCommands } from '../../commands';
+import { ChosenHeroCommands, CommandType } from '../../commands';
+import { EntityControlled } from '../../entity';
 import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class TargetMonsterClosestToBase extends LeafNode {
+export class IsTargetEntityControlled extends LeafNode {
     protected _execute({
+        gameState,
         localCache,
     }: {
         heroID: number;
@@ -13,11 +15,7 @@ export class TargetMonsterClosestToBase extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetMonsterIDs = localCache.get<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS });
-        if (targetMonsterIDs.length === 0) {
-            return false;
-        }
-        localCache.set<number>({ key: LocalCacheKey.TARGET_ENTITY_ID, value: targetMonsterIDs[0] });
-        return true;
+        const targetEntityID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
+        return gameState.entityMap[targetEntityID].isControlled === EntityControlled.IS_CONTROLLED;
     }
 }

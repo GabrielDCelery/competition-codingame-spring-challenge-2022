@@ -3,7 +3,7 @@ import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class InterceptTargetMonster extends LeafNode {
+export class InterceptTargetEntity extends LeafNode {
     protected _execute({
         heroID,
         gameState,

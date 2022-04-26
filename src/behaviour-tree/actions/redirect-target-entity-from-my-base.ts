@@ -14,7 +14,7 @@ import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class RedirectMonsterFromMyBase extends LeafNode {
+export class RedirectTargetEntityFromMyBase extends LeafNode {
     protected _execute({
         heroID,
         gameState,
