@@ -11,7 +11,6 @@ import {
 import { EntityType } from '../entity';
 import {
     DirectEntityAwayFromMyBase,
-    FarmTargetMonster,
     InterceptTargetEnemyHero,
     InterceptTargetEntity,
     MoveToArea,
@@ -94,7 +93,7 @@ const farmBehaviour = new SequenceNode([
     new TargetEntityClosestToMyHero(),
     new SelectNode([
         new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
-        new FarmTargetMonster(),
+        new InterceptTargetEntity(),
     ]),
 ]);
 
@@ -145,7 +144,7 @@ const interceptEnemyHeroBehaviour = new SequenceNode([
 const heroAI = new BehaviourTree(
     new SelectNode([
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), new HaveIAlreadyChosenCommand()])),
-        //   new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), shieldMyselfBehaviour])),
+        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), shieldMyselfBehaviour])),
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), defendBaseFromMonstersBehaviour])),
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), interceptEnemyHeroBehaviour])),
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), farmBehaviour])),
