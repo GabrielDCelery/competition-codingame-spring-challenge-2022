@@ -252,43 +252,18 @@ describe('main', () => {
         console.log(JSON.stringify(cosenHeroCommands));
         const end = new Date().getTime();
         console.log(end - start);
-        /*
-        const sourcePosition = {
-            x: 1761,
-            y: 5285,
-        };
-
-        const targetPosition = {
-            x: 1763,
-            y: 4500,
-        };
-
-        const sourceDirection = {
-            x: 2,
-            y: 799,
-        };
-
-        const targetDirection = vector2DSubtract({
-            v1: targetPosition,
-            v2: sourcePosition,
-        });
+                */
 
         const a = vector2DDot({
-            v1: targetDirection,
-            v2: sourceDirection,
+            v1: { x: -1, y: 0 },
+            v2: { x: -1, y: -1 },
         });
 
-        const b = vector2DDot({
-            v1: sourceDirection,
-            v2: targetDirection,
-        });
         console.log(a);
-        console.log(b);
 
         // When
 
         // Then
         expect(true).to.deep.equal(true);
-        */
     });
 });

@@ -3,7 +3,7 @@ import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class Wait extends LeafNode {
+export class InterceptTargetEnemyHero extends LeafNode {
     protected _execute({
         heroID,
         gameState,
@@ -16,12 +16,12 @@ export class Wait extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const { id, position, velocity, maxSpeed, type } = gameState.entityMap[heroID];
+        const targetEnemyHeroID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENEMY_HERO_ID });
         chosenHeroCommands[heroID] = {
             role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.GRUNT,
-            type: CommandType.WAIT,
-            source: { id, type, position, velocity, maxSpeed },
-            target: { id, type, position, velocity, maxSpeed },
+            type: CommandType.INTERCEPT,
+            source: gameState.entityMap[heroID],
+            target: gameState.entityMap[targetEnemyHeroID],
         };
         return true;
     }

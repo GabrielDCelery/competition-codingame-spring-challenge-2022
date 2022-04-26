@@ -85,7 +85,7 @@ try {
 
         while (keepRunningAI) {
             gameStateAnalysis.players[GS.PlayerID.ME].heroIDs.forEach((heroID) => {
-                return heroAI.execute({
+                heroAI.execute({
                     heroID,
                     gameState: compositeGameState,
                     gameStateAnalysis,

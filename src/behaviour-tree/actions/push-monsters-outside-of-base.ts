@@ -19,31 +19,36 @@ export class PushMonstersOutsideOfMyBase extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const pushTowardsLocation = vector2DAdd({
-            v1: gameState.entityMap[heroID].position,
-            v2: vector2DMultiply({
-                v: vector2DNormalize({
-                    v: vector2DSubtract({
-                        v1: gameState.entityMap[heroID].position,
-                        v2: gameState.players[PlayerID.ME].baseCoordinates,
+        try {
+            const pushTowardsLocation = vector2DAdd({
+                v1: gameState.entityMap[heroID].position,
+                v2: vector2DMultiply({
+                    v: vector2DNormalize({
+                        v: vector2DSubtract({
+                            v1: gameState.entityMap[heroID].position,
+                            v2: gameState.players[PlayerID.ME].baseCoordinates,
+                        }),
                     }),
+                    ratio: WIND_SPELL_POWER_RANGE,
                 }),
-                ratio: WIND_SPELL_POWER_RANGE,
-            }),
-        });
+            });
 
-        chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.NO_ROLE,
-            type: CommandType.SPELL_WIND,
-            source: gameState.entityMap[heroID],
-            target: {
-                id: -1,
-                type: EntityType.POINT_ON_MAP,
-                maxSpeed: 0,
-                position: pushTowardsLocation,
-                velocity: { x: 0, y: 0 },
-            },
-        };
-        return true;
+            chosenHeroCommands[heroID] = {
+                role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.GRUNT,
+                type: CommandType.SPELL_WIND,
+                source: gameState.entityMap[heroID],
+                target: {
+                    id: -1,
+                    type: EntityType.POINT_ON_MAP,
+                    maxSpeed: 0,
+                    position: pushTowardsLocation,
+                    velocity: { x: 0, y: 0 },
+                },
+            };
+            return true;
+        } catch (error_) {
+            console.error(`PushMonstersOutsideOfMyBase`);
+            throw new Error(`PushMonstersOutsideOfMyBase`);
+        }
     }
 }

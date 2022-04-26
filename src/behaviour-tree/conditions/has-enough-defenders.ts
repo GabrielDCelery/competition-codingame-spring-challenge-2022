@@ -6,9 +6,11 @@ import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
 export class HasEnoughDefenders extends LeafNode {
     protected _execute({
+        heroID,
         chosenHeroCommands,
         gameState,
         gameStateAnalysis,
+        localCache,
     }: {
         heroID: number;
         gameState: GameState;
@@ -16,28 +18,15 @@ export class HasEnoughDefenders extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const availableHeroes = gameStateAnalysis.players[PlayerID.ME].heroIDs.filter((heroID) => {
+        const targetMonsterIDs = localCache.get<number[]>({ key: LocalCacheKey.TARGET_MONSTER_IDS });
+        const numOfMonstersINeedToDealWith = targetMonsterIDs.length;
+        const availableNumberOfDefenders = gameStateAnalysis.players[PlayerID.ME].heroIDs.filter((heroID) => {
             return gameState.entityMap[heroID].isControlled !== EntityControlled.IS_CONTROLLED;
-        });
+        }).length;
         const numOfDefenders = Object.values(chosenHeroCommands).filter((chosenHeroCommand) => {
             return chosenHeroCommand.role === CommandRole.DEFENDER;
-        });
-        switch (availableHeroes.length) {
-            case 3: {
-                return numOfDefenders.length >= 2;
-            }
-            case 2: {
-                return numOfDefenders.length >= 2;
-            }
-            case 1: {
-                return numOfDefenders.length >= 1;
-            }
-            case 0: {
-                return numOfDefenders.length >= 0;
-            }
-            default: {
-                throw new Error('oops');
-            }
-        }
+        }).length;
+        const numOfDefendersNeeded = Math.min(availableNumberOfDefenders, numOfMonstersINeedToDealWith);
+        return numOfDefenders >= numOfDefendersNeeded && numOfDefenders <= 2;
     }
 }

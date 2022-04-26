@@ -1,11 +1,9 @@
-import { heroAI } from './behaviour-tree';
 import { EntityBase, MovingEntity } from './entity';
-import { GameState, PlayerID } from './game-state';
-import { GameStateAnalysis } from './game-state-analysis';
 
 export enum CommandRole {
-    NO_ROLE = 'NO_ROLE',
+    GRUNT = 'GRUNT',
     DEFENDER = 'DEFENDER',
+    INTERCEPTOR = 'INTERCEPTOR',
 }
 
 export enum CommandType {

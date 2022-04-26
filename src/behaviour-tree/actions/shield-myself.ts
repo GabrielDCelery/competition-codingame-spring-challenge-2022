@@ -18,7 +18,7 @@ export class SheildMyself extends LeafNode {
     }): boolean {
         const { id, position, velocity, maxSpeed, type } = gameState.entityMap[heroID];
         chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.NO_ROLE,
+            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.GRUNT,
             type: CommandType.SPELL_SHIELD,
             source: { id, type, position, velocity, maxSpeed },
             target: { id, type, position, velocity, maxSpeed },

@@ -38,7 +38,7 @@ export class AssistInKillingMonsterMarkedForInterception extends LeafNode {
             }),
         });
         chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.NO_ROLE,
+            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.GRUNT,
             type: CommandType.INTERCEPT,
             source: gameState.entityMap[heroID],
             target: gameState.entityMap[closestMonsterMarkedForInterception],

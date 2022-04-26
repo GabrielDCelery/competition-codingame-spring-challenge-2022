@@ -9,3 +9,4 @@ export * from './filter-already-targeted-areas';
 export * from './filter-monsters-within-intercept-range';
 export * from './set-defender-role';
 export * from './filter-area-that-i-just-visited';
+export * from './set-interceptor-role';

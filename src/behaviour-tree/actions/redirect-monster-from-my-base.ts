@@ -1,6 +1,14 @@
 import { ChosenHeroCommands, CommandRole, CommandType } from '../../commands';
-import { vector2DAdd, vector2DClockwise, vector2DMultiply, vector2DNormalize, vector2DSubtract } from '../../common';
-import { MONSTER_MAX_SPEED, WIND_SPELL_POWER_RANGE } from '../../config';
+import {
+    vector2DAdd,
+    vector2DClockwise,
+    vector2DCounterClockwise,
+    vector2DDot,
+    vector2DMultiply,
+    vector2DNormalize,
+    vector2DSubtract,
+} from '../../common';
+import { MAP_WIDTH, MONSTER_MAX_SPEED, WIND_SPELL_POWER_RANGE } from '../../config';
 import { EntityType } from '../../entity';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
@@ -32,12 +40,28 @@ export class RedirectMonsterFromMyBase extends LeafNode {
         });
 
         const vectorPointingToMonsterNorm = vector2DNormalize({ v: vectorPointingToMonster });
+
         const vectorPointingToMonsterNormScaled = vector2DMultiply({
             v: vectorPointingToMonsterNorm,
             ratio: MONSTER_MAX_SPEED,
         });
 
-        const redirectVelocity = vector2DClockwise({ v: vectorPointingToMonsterNormScaled });
+        const redirectVelocity = (() => {
+            if (
+                gameState.players[PlayerID.ME].baseCoordinates.x === 0 &&
+                gameState.players[PlayerID.ME].baseCoordinates.y === 0
+            ) {
+                return vector2DDot({ v1: { x: 1, y: 0 }, v2: vectorPointingToMonsterNormScaled }) >=
+                    vector2DDot({ v1: { x: 1, y: 0 }, v2: { x: 1, y: 1 } })
+                    ? vector2DClockwise({ v: vectorPointingToMonsterNormScaled })
+                    : vector2DCounterClockwise({ v: vectorPointingToMonsterNormScaled });
+            }
+
+            return vector2DDot({ v1: { x: -1, y: 0 }, v2: vectorPointingToMonsterNormScaled }) >=
+                vector2DDot({ v1: { x: -1, y: 0 }, v2: { x: -1, y: -1 } })
+                ? vector2DClockwise({ v: vectorPointingToMonsterNormScaled })
+                : vector2DCounterClockwise({ v: vectorPointingToMonsterNormScaled });
+        })();
 
         const redirectMonsterTo = vector2DAdd({
             v1: expectedPosition,
@@ -45,7 +69,7 @@ export class RedirectMonsterFromMyBase extends LeafNode {
         });
 
         chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.NO_ROLE,
+            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.GRUNT,
             type: CommandType.SPELL_CONTROL,
             source: gameState.entityMap[heroID],
             target: {

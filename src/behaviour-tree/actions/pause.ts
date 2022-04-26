@@ -18,7 +18,7 @@ export class Pause extends LeafNode {
     }): boolean {
         const { id, position, velocity, maxSpeed, type } = gameState.entityMap[heroID];
         chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.NO_ROLE,
+            role: CommandRole.GRUNT,
             type: CommandType.PAUSE,
             source: { id, type, position, velocity, maxSpeed },
             target: { id, type, position, velocity, maxSpeed },

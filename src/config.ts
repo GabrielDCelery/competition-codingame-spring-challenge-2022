@@ -24,5 +24,7 @@ export const AREA_HEIGHT = 3000;
 
 export const FARMING_RANGE = 10000;
 export const INTERCEPT_RANGE = 10000;
+export const INTERCEPT_ENEMY_HERO_RANGE = 10000;
 
 export const AREA_RADIUS = 2200;
+export const MANA_EMERGENCY_POOL = 50;

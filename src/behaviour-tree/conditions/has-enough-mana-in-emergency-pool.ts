@@ -1,16 +1,14 @@
 import { ChosenHeroCommands, CommandType } from '../../commands';
-import { SPELL_MANA_COST } from '../../config';
+import { MANA_EMERGENCY_POOL, SPELL_MANA_COST } from '../../config';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
+import { LeafNode, LocalCache } from '../bt-engine';
 
-export class DoIHaveEnoughManaToCastSpells extends LeafNode {
+export class HasEnoughManaInEmergencyPool extends LeafNode {
     protected _execute({
-        heroID,
         gameState,
-        gameStateAnalysis,
+
         chosenHeroCommands,
-        localCache,
     }: {
         heroID: number;
         gameState: GameState;
@@ -26,6 +24,6 @@ export class DoIHaveEnoughManaToCastSpells extends LeafNode {
             );
         }).length;
         const availableMana = gameState.players[PlayerID.ME].mana - numOfCommandsAlreadyCastingSpell * SPELL_MANA_COST;
-        return availableMana >= SPELL_MANA_COST;
+        return availableMana - MANA_EMERGENCY_POOL >= SPELL_MANA_COST;
     }
 }

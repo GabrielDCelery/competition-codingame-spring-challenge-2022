@@ -11,13 +11,7 @@ export abstract class CompositeNode {
         this.nodes = nodes;
     }
 
-    protected _execute({
-        heroID,
-        gameState,
-        gameStateAnalysis,
-        chosenHeroCommands,
-        localCache,
-    }: {
+    protected _execute({}: {
         heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
@@ -176,6 +170,8 @@ export enum LocalCacheKey {
     TARGET_POSITION = 'TARGET_POSITION',
     TARGET_AREAS = 'TARGET_AREAS',
     TARGET_AREA = 'TARGET_AREA',
+    TARGET_ENEMY_HERO_IDS = 'TARGET_ENEMY_HERO_IDS',
+    TARGET_ENEMY_HERO_ID = 'TARGET_ENEMY_HERO_ID',
 }
 
 export class LocalCache {

@@ -18,7 +18,7 @@ export class InterceptTargetMonster extends LeafNode {
     }): boolean {
         const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_MONSTER_ID });
         chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.NO_ROLE,
+            role: localCache.getOptional<CommandRole>({ key: LocalCacheKey.ROLE }) || CommandRole.GRUNT,
             type: CommandType.INTERCEPT,
             source: gameState.entityMap[heroID],
             target: gameState.entityMap[targetMonsterID],

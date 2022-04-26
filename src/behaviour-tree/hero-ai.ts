@@ -1,5 +1,6 @@
 import {
     FarmTargetMonster,
+    InterceptTargetEnemyHero,
     InterceptTargetMonster,
     MoveToArea,
     Pause,
@@ -10,19 +11,27 @@ import {
 } from './actions';
 import { BehaviourTree, SelectNode, SequenceNode } from './bt-engine';
 import {
+    AmIClosestToTargetEnemyHero,
     AmIClosestToTargetMonster,
     AmIInMeleeRangeOfTargetMonster,
+    AmIInWindSpellRangeOfTargetEnemyHero,
     CanIDestroyTargetMonsterBeforeItDamagesMyBase,
+    CanIPushTargetEnemyHero,
     CanIPushTargetMonster,
     CanISeeEnemyHero,
     DoIHaveEnoughManaToCastSpells,
     DoIHaveShield,
     HasEnoughDefenders,
+    HasEnoughInterceptors,
+    HasEnoughManaInEmergencyPool,
+    HasReachedMaximumNumberOfDefenders,
+    HasReachedMaximumNumberOfInterceptors,
     //   HasNonPatrolledAreas,
     HaveIAlreadyChosenCommand,
     IsTargetMonsterWithinMyBase,
     // MarkClosestNonPatrolledAreaIfIAmTheClosest,
     TargetAreaClosestToMe,
+    TargetEnemyHeroClosestToBase,
     TargetMonsterClosestToBase,
     TargetMonsterClosestToMe,
 } from './conditions';
@@ -32,6 +41,7 @@ import { AmIInWindSpellRangeOfTargetMonster } from './conditions/am-i-in-wind-sp
 import { CanIControlTargetMonster } from './conditions/can-i-control-target-monster';
 import { IsTargetMonsterNearMyBase } from './conditions/is-target-monster-near-my-base';
 import { InverterNode } from './decorators';
+import { ErrorCatcherNode } from './decorators/error-catcher';
 import {
     ClearLocalCache,
     FilterAlreadyTargetedMonsters,
@@ -41,16 +51,18 @@ import {
     GetWanderingMonsters,
     FilterToAreasWithNoMonsters,
     FilterAlreadyTargetedAreas,
-    FilterMonstersWithinInterceptRange,
     SetDefenderRole,
     FilterAreaThatIJustVisited,
+    SetInterceptorRole,
 } from './helpers';
+import { FilterAlreadyTargetedHeroes } from './helpers/filter-already-targeted-heroes';
+import { GetEnemyHeroesNearMyBase } from './helpers/get-enemy-heroes-near-my-base';
 
 const defendBaseFromMonstersBehaviour = new SequenceNode([
-    //  new InverterNode(new HasEnoughDefenders()),
     new GetMonstersThreateningMyBase(),
     // new FilterMonstersWithinInterceptRange(),
     new FilterAlreadyTargetedMonsters(),
+    new InverterNode(new HasEnoughDefenders()),
     new TargetMonsterClosestToBase(),
     new SetDefenderRole(),
     new SelectNode([
@@ -97,18 +109,38 @@ const patrolBehaviourV2 = new SequenceNode([
 const shieldMyselfBehaviour = new SequenceNode([
     new CanISeeEnemyHero(),
     new InverterNode(new DoIHaveShield()),
-    new DoIHaveEnoughManaToCastSpells(),
+    new HasEnoughManaInEmergencyPool(),
+    // new DoIHaveEnoughManaToCastSpells(),
     new SheildMyself(),
 ]);
 
+const interceptEnemyHeroBehaviour = new SequenceNode([
+    new HasEnoughManaInEmergencyPool(),
+    new GetEnemyHeroesNearMyBase(),
+    new FilterAlreadyTargetedHeroes(),
+    new InverterNode(new HasEnoughInterceptors()),
+    new TargetEnemyHeroClosestToBase(),
+    new SetInterceptorRole(),
+    new SelectNode([
+        new SequenceNode([new InverterNode(new AmIClosestToTargetEnemyHero()), new Pause()]),
+        new SequenceNode([
+            new DoIHaveEnoughManaToCastSpells(),
+            new AmIInWindSpellRangeOfTargetEnemyHero(),
+            new CanIPushTargetEnemyHero(),
+            new PushMonstersOutsideOfMyBase(),
+        ]),
+        new InterceptTargetEnemyHero(),
+    ]),
+]);
 const heroAI = new BehaviourTree(
     new SelectNode([
-        new SequenceNode([new ClearLocalCache(), new HaveIAlreadyChosenCommand()]),
-        //  new SequenceNode([new ClearLocalCache(), shieldMyselfBehaviour]),
-        new SequenceNode([new ClearLocalCache(), defendBaseFromMonstersBehaviour]),
-        new SequenceNode([new ClearLocalCache(), farmBehaviour]),
-        new SequenceNode([new ClearLocalCache(), patrolBehaviourV2]),
-        new SequenceNode([new ClearLocalCache(), new Wait()]),
+        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), new HaveIAlreadyChosenCommand()])),
+        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), shieldMyselfBehaviour])),
+        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), defendBaseFromMonstersBehaviour])),
+        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), interceptEnemyHeroBehaviour])),
+        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), farmBehaviour])),
+        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), patrolBehaviourV2])),
+        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), new Wait()])),
     ])
 );
 
