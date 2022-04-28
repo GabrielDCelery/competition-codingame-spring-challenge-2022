@@ -92,9 +92,9 @@ try {
                     chosenHeroCommands,
                 });
             });
-            keepRunningAI = !haveAllMyHeroesBeenAsignedCommands({ chosenHeroCommands });
+            keepRunningAI = !haveAllMyHeroesBeenAsignedCommands({ gameState: compositeGameState, chosenHeroCommands });
         }
-
+        console.error(JSON.stringify(chosenHeroCommands));
         const commands = Object.values(chosenHeroCommands).map((chosenCommand) => {
             const { type, source, target, role } = chosenCommand;
             switch (type) {

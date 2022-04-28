@@ -64,14 +64,21 @@ export const areEntitiesWithinDistance = ({
 };
 
 export const haveAllMyHeroesBeenAsignedCommands = ({
+    gameState,
     chosenHeroCommands,
 }: {
+    gameState: GameState;
     chosenHeroCommands: ChosenHeroCommands;
 }) => {
     const validCommands = Object.values(chosenHeroCommands).filter((chosenHeroCommand) => {
         return chosenHeroCommand.type !== CommandType.PAUSE;
     });
-    return validCommands.length === 3;
+    return (
+        validCommands.length ===
+        Object.values(gameState.entityMap).filter((entity) => {
+            return entity.type === EntityType.MY_HERO && !entity.isControlled;
+        }).length
+    );
 };
 
 export const isPositionNearMapMarker = ({ position, mapMarker }: { position: Vector2D; mapMarker: Vector2D }) => {

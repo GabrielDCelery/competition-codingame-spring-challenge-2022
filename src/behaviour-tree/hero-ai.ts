@@ -26,7 +26,7 @@ import {
     IsTargetEntityShielded,
     CanISeeEnemyHero,
     DoIHaveShield,
-    HasEnoughHeroesAssumingRole,
+    // HasEnoughHeroesAssumingRole,
     HasEnoughMana,
     HaveIAlreadyChosenCommand,
     IsTargetEntityExpectedToMoveIntoRangeOfMyBase,
@@ -35,6 +35,7 @@ import {
     TargetEntityClosestToMyHero,
     AmIClosestToTargetEntity,
     IsTargetEntityControlled,
+    HasReachedMaximumAllowedRolesOfType,
 } from './conditions';
 import { AmIClosestToTargetArea } from './conditions/am-i-closest-to-target-area';
 import { IsTargetEntityWithinRangeOfMyBase } from './conditions/is-target-entity-within-range-of-my-base';
@@ -55,13 +56,13 @@ import { FilterAlreadyTargetedEntities } from './helpers/filter-already-targeted
 import { GetEnemyHeroesNearMyBase } from './helpers/get-enemy-heroes-near-my-base';
 
 const defendBaseFromMonstersBehaviour = new SequenceNode([
+    new InverterNode(
+        new HasReachedMaximumAllowedRolesOfType({ role: HeroRole.DEFENDER, maxAllowed: MAX_ALLOWED_NUM_OF_DEFENDERS })
+    ),
+    new SetHeroRole({ role: HeroRole.DEFENDER }),
     new GetMonstersThreateningMyBase(),
     new FilterAlreadyTargetedEntities(),
-    new InverterNode(
-        new HasEnoughHeroesAssumingRole({ role: HeroRole.DEFENDER, maxAllowed: MAX_ALLOWED_NUM_OF_DEFENDERS })
-    ),
     new TargetEntityClosestToMyBase(),
-    new SetHeroRole({ role: HeroRole.DEFENDER }),
     new SelectNode([
         new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
         new SequenceNode([
@@ -114,12 +115,15 @@ const shieldMyselfBehaviour = new SequenceNode([
 ]);
 
 const interceptEnemyHeroBehaviour = new SequenceNode([
+    new InverterNode(
+        new HasReachedMaximumAllowedRolesOfType({
+            role: HeroRole.INTERCEPTOR,
+            maxAllowed: MAX_ALLOWED_NUM_OF_INTERCEPTORS,
+        })
+    ),
     new HasEnoughMana({ reserve: 50 }),
     new GetEnemyHeroesNearMyBase(),
     new FilterAlreadyTargetedEntities(),
-    new InverterNode(
-        new HasEnoughHeroesAssumingRole({ role: HeroRole.INTERCEPTOR, maxAllowed: MAX_ALLOWED_NUM_OF_INTERCEPTORS })
-    ),
     new TargetEntityClosestToMyBase(),
     new SetHeroRole({ role: HeroRole.INTERCEPTOR }),
     new SelectNode([
