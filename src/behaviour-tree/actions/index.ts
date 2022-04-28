@@ -7,3 +7,5 @@ export * from './push-target-entity-away-from-my-base';
 export * from './redirect-target-entity-from-my-base';
 export * from './shield-myself';
 export * from './wait';
+export * from './move-towards-enemy-base';
+export * from './move-towards-my-base';

@@ -1,5 +1,6 @@
-import { getEntityExpectedPosition, Vector2D, vector2DSubtract } from './common';
+import { getEntityExpectedPosition, Vector2D, vector2DDistancePow, vector2DSubtract } from './common';
 import { isEntityWithinMapBoundaries, isEntitySeenByBase } from './conditions';
+import { BASE_VISION_RANGE, HERO_VISION_RANGE } from './config';
 import { cloneEntity, Entity, EntityType } from './entity';
 
 export enum PlayerID {
@@ -86,7 +87,7 @@ export const createCompositeGameState = ({
     newGameState: GameState;
 }): GameState => {
     const compositeGameState: GameState = newGameState;
-    const newEntityIDs = Object.keys(compositeGameState.entityMap).map((v) => Number.parseInt(v));
+    const newEntityIDs = Object.keys(newGameState.entityMap).map((v) => Number.parseInt(v));
 
     // sort out incomplete velocity data
     newEntityIDs.forEach((newEntityID) => {
@@ -103,7 +104,10 @@ export const createCompositeGameState = ({
         });
     });
 
-    /*
+    const myHeroIDs = Object.values(compositeGameState.entityMap)
+        .filter((entity) => entity.type === EntityType.MY_HERO)
+        .map((v) => v.id);
+
     const oldEntityIDs = Object.keys(oldGameState.entityMap).map((v) => Number.parseInt(v));
     oldEntityIDs.forEach((oldEntityID) => {
         const entityLastKnowState = oldGameState.entityMap[oldEntityID];
@@ -114,16 +118,35 @@ export const createCompositeGameState = ({
         if (entityWasSeenThisTurn) {
             return;
         }
-        if (isEntitySeenByBase({ gameState: oldGameState, entity: entityLastKnowState })) {
+        const expectedPosition = getEntityExpectedPosition({ entity: entityLastKnowState });
+
+        const wasEntitySeenByMyBase =
+            vector2DDistancePow({
+                v1: compositeGameState.players[PlayerID.ME].baseCoordinates,
+                v2: expectedPosition,
+            }) <= Math.pow(BASE_VISION_RANGE, 2);
+
+        if (wasEntitySeenByMyBase) {
             return;
         }
-        const expectedPosition = getEntityExpectedPosition({ entity: entityLastKnowState });
+
+        const myHeroThatSawEntity = myHeroIDs.find((heroID) => {
+            return (
+                vector2DDistancePow({ v1: compositeGameState.entityMap[heroID].position, v2: expectedPosition }) <=
+                Math.pow(HERO_VISION_RANGE, 2)
+            );
+        });
+
+        if (myHeroThatSawEntity !== undefined) {
+            return;
+        }
+
         const newEntity = { ...cloneEntity({ entity: entityLastKnowState }), position: expectedPosition };
         if (!isEntityWithinMapBoundaries({ entity: newEntity })) {
             return;
         }
         compositeGameState.entityMap[oldEntityID] = newEntity;
     });
-    */
+
     return compositeGameState;
 };

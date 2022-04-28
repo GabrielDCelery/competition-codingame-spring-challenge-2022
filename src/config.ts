@@ -25,7 +25,7 @@ export const AREA_WIDTH = 3526;
 export const AREA_HEIGHT = 3000;
 
 export const FARMING_RANGE = 10000;
-export const INTERCEPT_RANGE = 10000;
+export const INTERCEPT_MONSTER_RANGE = 8000;
 export const INTERCEPT_ENEMY_HERO_RANGE = 10000;
 
 export const AREA_RADIUS = 2200;

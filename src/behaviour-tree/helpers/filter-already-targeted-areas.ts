@@ -4,7 +4,7 @@ import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class FilterAlreadyTargetedAreas extends LeafNode {
+export class FilterOutAlreadyTargetedAreas extends LeafNode {
     protected _execute({
         chosenHeroCommands,
         localCache,
@@ -15,23 +15,22 @@ export class FilterAlreadyTargetedAreas extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetAreas = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS });
+        const targetPositions = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS });
 
         const alreadyTargetedPositionsMap: { [index: string]: true } = {};
 
-        Object.values(chosenHeroCommands)
-            .filter((chosenHeroCommand) => {
-                return chosenHeroCommand.type === CommandType.MOVE_TO_AREA;
-            })
-            .forEach((chosenHeroCommand) => {
-                alreadyTargetedPositionsMap[vectorToKey({ v: chosenHeroCommand.target.position })] = true;
-            });
-
-        const filteredTargetAreas = targetAreas.filter((targetArea) => {
-            return alreadyTargetedPositionsMap[vectorToKey({ v: targetArea })] !== true;
+        Object.values(chosenHeroCommands).forEach((chosenHeroCommand) => {
+            if (chosenHeroCommand.type !== CommandType.MOVE_TO_POSITION) {
+                return;
+            }
+            alreadyTargetedPositionsMap[vectorToKey({ v: chosenHeroCommand.target.position })] = true;
         });
 
-        localCache.set<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS, value: filteredTargetAreas });
+        const filteredTargetPositions = targetPositions.filter((targetPosition) => {
+            return alreadyTargetedPositionsMap[vectorToKey({ v: targetPosition })] !== true;
+        });
+
+        localCache.set<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS, value: filteredTargetPositions });
 
         return true;
     }

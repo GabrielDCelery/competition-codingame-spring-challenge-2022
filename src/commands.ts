@@ -1,9 +1,12 @@
 import { EntityBase, MovingEntity } from './entity';
 
 export enum HeroRole {
+    BASE_PROTECTOR = 'BASE_PROTECTOR',
     GRUNT = 'GRUNT',
     DEFENDER = 'DEFENDER',
     INTERCEPTOR = 'INTERCEPTOR',
+    GATHERER = 'GATHERER',
+    TAGGER = 'TAGGER',
 }
 
 export enum CommandType {
@@ -12,7 +15,7 @@ export enum CommandType {
     INTERCEPT = 'INTERCEPT',
     FARM = 'FARM',
     SPELL_WIND = 'SPELL_WIND',
-    MOVE_TO_AREA = 'MOVE_TO_AREA',
+    MOVE_TO_POSITION = 'MOVE_TO_POSITION',
     SPELL_SHIELD = 'SPELL_SHIELD',
     SPELL_CONTROL = 'SPELL_CONTROL',
 }

@@ -14,9 +14,9 @@ export enum PositionType {
     MY_BASE = 'MY_BASE',
     MY_BASE_EDGE = 'MY_BASE_EDGE',
     CENTER = 'CENTER',
-    OUTER_RIM = 'OUTER_RIM',
-    PATROL_AREA = 'PATROL_AREA',
-    PATROL_AREA_2 = 'PATROL_AREA_2',
+    INNER_PATROL_AREA = 'INNER_PATROL_AREA',
+    OUTER_PATROL_AREA = 'OUTER_PATROL_AREA',
+    INNER_HARRASS_AREA = 'INNER_HARRASS_AREA',
 }
 
 const mapAreaCenterCoordinatesForTopLeft: { [key in PositionType]: Vector2D[] } = {
@@ -27,19 +27,20 @@ const mapAreaCenterCoordinatesForTopLeft: { [key in PositionType]: Vector2D[] } 
         { x: 1763, y: 4500 },
     ],
     [PositionType.CENTER]: [{ x: 8815, y: 4500 }],
-    [PositionType.OUTER_RIM]: [
-        { x: 8815, y: 1500 },
-        { x: 1763, y: 7500 },
-    ],
-    [PositionType.PATROL_AREA]: [
+    [PositionType.INNER_PATROL_AREA]: [
         { x: 1400, y: 7000 },
         { x: 7000, y: 1400 },
         { x: 5000, y: 5000 },
     ],
-    [PositionType.PATROL_AREA_2]: [
+    [PositionType.OUTER_PATROL_AREA]: [
         { x: 8500, y: 5000 },
         { x: 10500, y: 1400 },
         { x: 5500, y: 8000 },
+    ],
+    [PositionType.INNER_HARRASS_AREA]: [
+        { x: 17630 - 1400, y: 9000 - 7000 },
+        { x: 17630 - 7000, y: 9000 - 1400 },
+        { x: 17630 - 5000, y: 9000 - 5000 },
     ],
 };
 
@@ -51,19 +52,20 @@ const mapAreaCenterCoordinatesForBottomRight: { [key in PositionType]: Vector2D[
         { x: 17630 - 1763, y: 9000 - 4500 },
     ],
     [PositionType.CENTER]: [{ x: 8815, y: 4500 }],
-    [PositionType.OUTER_RIM]: [
-        { x: 8815, y: 7500 },
-        { x: 17630 - 1763, y: 1500 },
-    ],
-    [PositionType.PATROL_AREA]: [
+    [PositionType.INNER_PATROL_AREA]: [
         { x: 17630 - 1400, y: 9000 - 7000 },
         { x: 17630 - 7000, y: 9000 - 1400 },
         { x: 17630 - 5000, y: 9000 - 5000 },
     ],
-    [PositionType.PATROL_AREA_2]: [
+    [PositionType.OUTER_PATROL_AREA]: [
         { x: 17630 - 8500, y: 9000 - 5000 },
         { x: 17630 - 10500, y: 9000 - 1400 },
         { x: 17630 - 5500, y: 9000 - 8000 },
+    ],
+    [PositionType.INNER_HARRASS_AREA]: [
+        { x: 1400, y: 7000 },
+        { x: 7000, y: 1400 },
+        { x: 5000, y: 5000 },
     ],
 };
 

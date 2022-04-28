@@ -1,11 +1,10 @@
 import { ChosenHeroCommands, HeroRole, CommandType } from '../../commands';
-import { Vector2D } from '../../common';
 import { EntityType } from '../../entity';
-import { GameState } from '../../game-state';
+import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class MoveToArea extends LeafNode {
+export class MoveTowardsEnemyBase extends LeafNode {
     protected _execute({
         heroID,
         gameState,
@@ -18,7 +17,6 @@ export class MoveToArea extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetPosition = localCache.get<Vector2D>({ key: LocalCacheKey.TARGET_POSITION });
         chosenHeroCommands[heroID] = {
             role: localCache.getOptional<HeroRole>({ key: LocalCacheKey.HERO_ROLE }) || HeroRole.GRUNT,
             type: CommandType.MOVE_TO_POSITION,
@@ -27,7 +25,7 @@ export class MoveToArea extends LeafNode {
                 id: -1,
                 type: EntityType.POINT_ON_MAP,
                 maxSpeed: 0,
-                position: targetPosition,
+                position: gameState.players[PlayerID.OPPONENT].baseCoordinates,
                 velocity: { x: 0, y: 0 },
             },
         };

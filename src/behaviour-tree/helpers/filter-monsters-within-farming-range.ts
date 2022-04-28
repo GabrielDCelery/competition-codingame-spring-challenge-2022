@@ -5,7 +5,14 @@ import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class FilterMonstersWithinFarmingRange extends LeafNode {
+export class FilterEntitiesWithingRangeOfMyBase extends LeafNode {
+    readonly range: number;
+
+    constructor({ range }: { range: number }) {
+        super();
+        this.range = range;
+    }
+
     protected _execute({
         gameState,
         localCache,
@@ -16,16 +23,16 @@ export class FilterMonstersWithinFarmingRange extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const monsterIDsToFilter = localCache.get<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS });
-        const monsterIDsWithinRange = monsterIDsToFilter.filter((targetMonsterID) => {
+        const entityIDsToFilter = localCache.get<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS });
+        const filteredEntityIDs = entityIDsToFilter.filter((entityID) => {
             return (
                 vector2DDistancePow({
                     v1: gameState.players[PlayerID.ME].baseCoordinates,
-                    v2: gameState.entityMap[targetMonsterID].position,
-                }) <= Math.pow(FARMING_RANGE, 2)
+                    v2: gameState.entityMap[entityID].position,
+                }) <= Math.pow(this.range, 2)
             );
         });
-        localCache.set<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS, value: monsterIDsWithinRange });
+        localCache.set<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS, value: filteredEntityIDs });
         return true;
     }
 }

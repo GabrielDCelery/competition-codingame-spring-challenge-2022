@@ -77,6 +77,8 @@ try {
 
         const compositeGameState = GS.createCompositeGameState({ oldGameState, newGameState });
 
+        console.error(JSON.stringify(compositeGameState));
+
         const gameStateAnalysis = GSA.createGameStateAnalysis({ gameState: compositeGameState });
 
         const chosenHeroCommands: ChosenHeroCommands = {};
@@ -94,7 +96,7 @@ try {
             });
             keepRunningAI = !haveAllMyHeroesBeenAsignedCommands({ gameState: compositeGameState, chosenHeroCommands });
         }
-        console.error(JSON.stringify(chosenHeroCommands));
+
         const commands = Object.values(chosenHeroCommands).map((chosenCommand) => {
             const { type, source, target, role } = chosenCommand;
             switch (type) {
@@ -115,7 +117,7 @@ try {
                     });
                     return `MOVE ${Math.round(taretVelocity.x)} ${Math.round(taretVelocity.y)} ${role}`;
                 }
-                case CommandType.MOVE_TO_AREA: {
+                case CommandType.MOVE_TO_POSITION: {
                     const { x, y } = target.position;
                     return `MOVE ${Math.round(x)} ${Math.round(y)} ${role}`;
                 }

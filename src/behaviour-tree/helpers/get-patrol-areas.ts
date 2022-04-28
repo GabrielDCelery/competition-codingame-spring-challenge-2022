@@ -4,7 +4,14 @@ import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis, PositionType } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class GetPatrolAreas extends LeafNode {
+export class SetPositionsOfInterest extends LeafNode {
+    readonly positionTypes: PositionType[];
+
+    constructor({ positionTypes }: { positionTypes: PositionType[] }) {
+        super();
+        this.positionTypes = positionTypes;
+    }
+
     protected _execute({
         gameStateAnalysis,
         localCache,
@@ -15,17 +22,17 @@ export class GetPatrolAreas extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        localCache.set<Vector2D[]>({
-            key: LocalCacheKey.TARGET_POSITIONS,
-            value: [
-                ...gameStateAnalysis.players[PlayerID.ME].mapAreaCenterCoordinatesGroupedByType[
-                    PositionType.PATROL_AREA
-                ],
-                ...gameStateAnalysis.players[PlayerID.ME].mapAreaCenterCoordinatesGroupedByType[
-                    PositionType.PATROL_AREA_2
-                ],
-            ],
+        const targetPositions: Vector2D[] = [];
+
+        this.positionTypes.forEach((positionType) => {
+            gameStateAnalysis.players[PlayerID.ME].mapAreaCenterCoordinatesGroupedByType[positionType].forEach(
+                (position) => {
+                    targetPositions.push(position);
+                }
+            );
         });
+
+        localCache.set<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS, value: targetPositions });
         return true;
     }
 }

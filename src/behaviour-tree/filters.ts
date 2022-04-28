@@ -43,7 +43,7 @@ export const filterDownToNonPatrolledPositions = ({
 
     Object.values(chosenHeroCommands).forEach((chosenHeroCommand) => {
         if (
-            [CommandType.FARM, CommandType.INTERCEPT, CommandType.MOVE_TO_AREA, CommandType.WAIT].includes(
+            [CommandType.FARM, CommandType.INTERCEPT, CommandType.MOVE_TO_POSITION, CommandType.WAIT].includes(
                 chosenHeroCommand.type
             )
         ) {

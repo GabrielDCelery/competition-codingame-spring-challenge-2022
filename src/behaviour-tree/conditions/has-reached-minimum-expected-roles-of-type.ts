@@ -3,14 +3,14 @@ import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache } from '../bt-engine';
 
-export class HasAllowedMaximumNumberOfHeroesOfType extends LeafNode {
+export class HasExpectedMinimumNumberOfHeroesOfType extends LeafNode {
     readonly role: HeroRole;
-    readonly maxAllowed: number;
+    readonly minExpected: number;
 
-    constructor({ role, maxAllowed }: { role: HeroRole; maxAllowed: number }) {
+    constructor({ role, minExpected }: { role: HeroRole; minExpected: number }) {
         super();
         this.role = role;
-        this.maxAllowed = maxAllowed;
+        this.minExpected = minExpected;
     }
 
     protected _execute({
@@ -25,6 +25,6 @@ export class HasAllowedMaximumNumberOfHeroesOfType extends LeafNode {
         const numOfHeroesAssumedRole = Object.values(chosenHeroCommands).filter((chosenHeroCommand) => {
             return chosenHeroCommand.role === this.role;
         }).length;
-        return this.maxAllowed > numOfHeroesAssumedRole;
+        return numOfHeroesAssumedRole >= this.minExpected;
     }
 }

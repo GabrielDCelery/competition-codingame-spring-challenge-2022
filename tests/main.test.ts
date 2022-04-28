@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import { vector2DSubtract, vector2DDot } from '../src/common';
+import { vector2DSubtract, vector2DDot, vector2DDistance } from '../src/common';
 
 // import { generateHeroCommands } from '../src/commands';
 
@@ -203,7 +203,7 @@ describe('main', () => {
                                     y: 1500,
                                 },
                             ],
-                            PATROL_AREA: [
+                            INNER_PATROL_AREA: [
                                 {
                                     x: 16230,
                                     y: 2000,
@@ -254,10 +254,7 @@ describe('main', () => {
         console.log(end - start);
                 */
 
-        const a = vector2DDot({
-            v1: { x: -1, y: 0 },
-            v2: { x: -1, y: -1 },
-        });
+        const a = vector2DDistance({ v1: { x: 1801, y: 4456 }, v2: { x: 0, y: 0 } });
 
         console.log(a);
 
