@@ -20,7 +20,7 @@ export class AmIClosestToTargetArea extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetArea = localCache.get<Vector2D>({ key: LocalCacheKey.TARGET_AREA });
+        const targetArea = localCache.get<Vector2D>({ key: LocalCacheKey.TARGET_POSITION });
         const otherHeroIDs = getMyOtherAvailableHeroIDs({ heroID, gameStateAnalysis, chosenHeroCommands });
         const amIClosest = isClosestPosition({
             sourcePosition: gameState.entityMap[heroID].position,

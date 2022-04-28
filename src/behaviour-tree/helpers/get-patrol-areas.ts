@@ -16,7 +16,7 @@ export class GetPatrolAreas extends LeafNode {
         localCache: LocalCache;
     }): boolean {
         localCache.set<Vector2D[]>({
-            key: LocalCacheKey.TARGET_AREAS,
+            key: LocalCacheKey.TARGET_POSITIONS,
             value: [
                 ...gameStateAnalysis.players[PlayerID.ME].mapAreaCenterCoordinatesGroupedByType[
                     PositionType.PATROL_AREA

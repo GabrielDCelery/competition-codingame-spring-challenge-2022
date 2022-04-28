@@ -1,56 +1,9 @@
 import { ChosenHeroCommands, CommandType } from '../commands';
 import { Vector2D, vector2DDistancePow, vector2DDot, vector2DSubtract, vectorToKey } from '../common';
-import { areEntitiesWithinDistance, isPositionNearMapMarker } from '../conditions';
-import { WIND_SPELL_CAST_RANGE } from '../config';
-import { EntityBase, EntityType, MovingEntity } from '../entity';
+import { isPositionNearMapMarker } from '../conditions';
+import { EntityBase, MovingEntity } from '../entity';
 import { GameState, PlayerID } from '../game-state';
 import { GameStateAnalysis } from '../game-state-analysis';
-
-export const filterDownToUnhandledMonsterIDs = ({
-    monsterIDsToFilter,
-    gameState,
-    gameStateAnalysis,
-    chosenHeroCommands,
-}: {
-    monsterIDsToFilter: number[];
-    gameState: GameState;
-    gameStateAnalysis: GameStateAnalysis;
-    chosenHeroCommands: ChosenHeroCommands;
-}): number[] => {
-    const monstersAlreadyBeingDealtWith: { [index: number]: true } = {};
-
-    Object.values(chosenHeroCommands).forEach((chosenHeroCommand) => {
-        if (
-            [CommandType.INTERCEPT, CommandType.FARM].includes(chosenHeroCommand.type) &&
-            chosenHeroCommand.target.type === EntityType.MONSTER
-        ) {
-            monstersAlreadyBeingDealtWith[chosenHeroCommand.target.id] = true;
-            return;
-        }
-        if (chosenHeroCommand.type === CommandType.SPELL_WIND) {
-            const hero = chosenHeroCommand.source;
-            gameStateAnalysis.players[PlayerID.ME].monsterThreateningMyBaseByDistanceIDs.forEach((monsterID) => {
-                const monster = gameState.entityMap[monsterID];
-                if (
-                    !areEntitiesWithinDistance({
-                        sourceEntity: hero,
-                        targetEntity: monster,
-                        distance: WIND_SPELL_CAST_RANGE,
-                    })
-                ) {
-                    return;
-                }
-                monstersAlreadyBeingDealtWith[monster.id] = true;
-            });
-        }
-    });
-
-    const unhandledMonsterIDs = monsterIDsToFilter.filter((monsterID) => {
-        return !monstersAlreadyBeingDealtWith[monsterID];
-    });
-
-    return unhandledMonsterIDs;
-};
 
 export const filterDownToNonPatrolledPositions = ({
     heroID,

@@ -18,7 +18,7 @@ export class Wait extends LeafNode {
     }): boolean {
         const { id, position, velocity, maxSpeed, type } = gameState.entityMap[heroID];
         chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<HeroRole>({ key: LocalCacheKey.ROLE }) || HeroRole.GRUNT,
+            role: localCache.getOptional<HeroRole>({ key: LocalCacheKey.HERO_ROLE }) || HeroRole.GRUNT,
             type: CommandType.WAIT,
             source: { id, type, position, velocity, maxSpeed },
             target: { id, type, position, velocity, maxSpeed },

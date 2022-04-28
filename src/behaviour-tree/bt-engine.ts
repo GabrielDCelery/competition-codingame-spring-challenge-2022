@@ -161,11 +161,11 @@ export class SelectNode extends CompositeNode {
 }
 
 export enum LocalCacheKey {
-    ROLE = 'ROLE',
+    HERO_ROLE = 'HERO_ROLE',
     TARGET_ENTITY_IDS = 'TARGET_ENTITY_IDS',
     TARGET_ENTITY_ID = 'TARGET_ENTITY_ID',
-    TARGET_AREAS = 'TARGET_AREAS',
-    TARGET_AREA = 'TARGET_AREA',
+    TARGET_POSITIONS = 'TARGET_POSITIONS',
+    TARGET_POSITION = 'TARGET_POSITION',
 }
 
 export class LocalCache {

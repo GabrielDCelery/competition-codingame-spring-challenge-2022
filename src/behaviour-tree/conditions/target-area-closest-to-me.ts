@@ -17,7 +17,7 @@ export class TargetAreaClosestToMe extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetAreas = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_AREAS });
+        const targetAreas = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS });
         if (targetAreas.length === 0) {
             return false;
         }
@@ -25,7 +25,7 @@ export class TargetAreaClosestToMe extends LeafNode {
             sourceEntity: gameState.entityMap[heroID],
             positions: targetAreas,
         });
-        localCache.set<Vector2D>({ key: LocalCacheKey.TARGET_AREA, value: closestArea });
+        localCache.set<Vector2D>({ key: LocalCacheKey.TARGET_POSITION, value: closestArea });
         return true;
     }
 }

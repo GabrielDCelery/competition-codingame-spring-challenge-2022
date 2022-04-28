@@ -17,7 +17,7 @@ export class FilterAreaThatIJustVisited extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        let targetAreas = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_AREAS });
+        let targetAreas = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS });
         const closestToHeroFilterPosition = getClosestPosition({
             sourceEntity: gameState.entityMap[heroID],
             positions: targetAreas,
@@ -37,7 +37,7 @@ export class FilterAreaThatIJustVisited extends LeafNode {
                 return !matching;
             });
         }
-        localCache.set<Vector2D[]>({ key: LocalCacheKey.TARGET_AREAS, value: targetAreas });
+        localCache.set<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS, value: targetAreas });
         return true;
     }
 }

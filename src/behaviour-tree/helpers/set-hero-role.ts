@@ -20,7 +20,7 @@ export class SetHeroRole extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        localCache.set<HeroRole>({ key: LocalCacheKey.ROLE, value: this.role });
+        localCache.set<HeroRole>({ key: LocalCacheKey.HERO_ROLE, value: this.role });
         return true;
     }
 }

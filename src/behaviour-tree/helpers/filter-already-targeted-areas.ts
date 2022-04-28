@@ -15,9 +15,10 @@ export class FilterAlreadyTargetedAreas extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetAreas = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_AREAS });
+        const targetAreas = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS });
 
         const alreadyTargetedPositionsMap: { [index: string]: true } = {};
+
         Object.values(chosenHeroCommands)
             .filter((chosenHeroCommand) => {
                 return chosenHeroCommand.type === CommandType.MOVE_TO_AREA;
@@ -30,7 +31,7 @@ export class FilterAlreadyTargetedAreas extends LeafNode {
             return alreadyTargetedPositionsMap[vectorToKey({ v: targetArea })] !== true;
         });
 
-        localCache.set<Vector2D[]>({ key: LocalCacheKey.TARGET_AREAS, value: filteredTargetAreas });
+        localCache.set<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS, value: filteredTargetAreas });
 
         return true;
     }

@@ -18,7 +18,7 @@ export class FilterToAreasWithNoMonsters extends LeafNode {
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const targetAreas = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_AREAS });
+        const targetAreas = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS });
 
         const areaMap: { [index: string]: { monsterCount: number; coordinates: Vector2D } } = {};
 
@@ -63,7 +63,7 @@ export class FilterToAreasWithNoMonsters extends LeafNode {
             .map((area) => area.coordinates);
 
         localCache.set<Vector2D[]>({
-            key: LocalCacheKey.TARGET_AREAS,
+            key: LocalCacheKey.TARGET_POSITIONS,
             value: positionsWithNoMonstersInThem,
         });
         return true;
