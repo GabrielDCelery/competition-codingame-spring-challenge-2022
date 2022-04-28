@@ -77,8 +77,6 @@ try {
 
         const compositeGameState = GS.createCompositeGameState({ oldGameState, newGameState });
 
-        console.error(JSON.stringify(compositeGameState));
-
         const gameStateAnalysis = GSA.createGameStateAnalysis({ gameState: compositeGameState });
 
         const chosenHeroCommands: ChosenHeroCommands = {};

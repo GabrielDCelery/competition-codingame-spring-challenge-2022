@@ -20,3 +20,4 @@ export * from './am-i-closest-to-enemy-base';
 export * from './target-area-that-i-have-least-information-of';
 export * from './am-i-closest-to-center';
 export * from './has-reached-allowed-roles-of-type';
+export * from './am-i-closest-to-my-base';

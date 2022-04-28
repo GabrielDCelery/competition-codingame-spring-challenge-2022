@@ -66,6 +66,7 @@ import {
     FilterOutAlreadyTargetedAreas,
     FilterAreaThatIJustVisited,
     SetHeroRole,
+    GetMonsters,
 } from './helpers';
 import { FilterAlreadyTargetedEntities } from './helpers/filter-already-targeted-entities';
 import { GetEnemyHeroesNearMyBase } from './helpers/get-enemy-heroes-near-my-base';
@@ -200,14 +201,49 @@ const taggerBehaviour = new SequenceNode([
     ]),
 ]);
 
+const baseProtectorBehavior = new SequenceNode([
+    new SetHeroRole({ role: HeroRole.BASE_PROTECTOR }),
+    new HasAllowedMaximumNumberOfHeroesOfType({ role: HeroRole.BASE_PROTECTOR, maxAllowed: 1 }),
+    new SelectNode([
+        new SequenceNode([
+            new GetMonsters(),
+            new FilterEntitiesWithingRangeOfMyBase({ range: 7000 }),
+            new FilterAlreadyTargetedEntities(),
+            new TargetEntityClosestToMyBase(),
+            new SelectNode([
+                new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
+                new SequenceNode([
+                    new HasEnoughMana({ reserve: 0 }),
+                    new InverterNode(new IsTargetEntityShielded()),
+                    new IsTargetEntityExpectedToMoveIntoRangeOfMyBase({ range: MONSTER_BASE_DETECTION_THRESHOLD }),
+                    new IsTargetEntityWithinRangeOfHero({ distance: WIND_SPELL_CAST_RANGE }),
+                    new PushTargetEntityAwayFromMyBase(),
+                ]),
+                new InterceptTargetEntity(),
+            ]),
+        ]),
+        new SequenceNode([
+            new HasEnemyHeroWithinDistanceOfMyBase({ distance: 7000 }),
+            new GetEnemyHeroesNearMyBase(),
+            new FilterAlreadyTargetedEntities(),
+            new TargetEntityClosestToMyBase(),
+            new SelectNode([
+                new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
+                new InterceptTargetEnemyHero(),
+            ]),
+        ]),
+    ]),
+]);
+
 const heroAI = new BehaviourTree(
     new SelectNode([
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), new HaveIAlreadyChosenCommand()])),
 
         //   new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), shieldMyselfBehaviour])),
         //  new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), gathererBehaviour])),
+        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), baseProtectorBehavior])),
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), defendBaseFromMonstersBehaviour])),
-        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), taggerBehaviour])),
+        //   new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), taggerBehaviour])),
 
         //    new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), interceptEnemyHeroBehaviour])),
         new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), farmBehaviour])),
