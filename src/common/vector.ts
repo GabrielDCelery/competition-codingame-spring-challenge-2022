@@ -66,6 +66,16 @@ export const vector2DCounterClockwise = ({ v }: { v: Vector2D }): Vector2D => {
     return { x: v.y, y: -1 * v.x };
 };
 
+export const vector2DAverage = ({ vList }: { vList: Vector2D[] }): Vector2D => {
+    let x: number = 0;
+    let y: number = 0;
+    vList.forEach((v) => {
+        x += v.x;
+        y += v.y;
+    });
+    return { x: x / vList.length, y: y / vList.length };
+};
+
 export const vectorToKey = ({ v }: { v: Vector2D }): string => {
     return `${v.x}_${v.y}`;
 };

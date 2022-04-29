@@ -141,7 +141,6 @@ const patrolBehaviourV2 = new SequenceNode([
 const shieldMyselfBehaviour = new SequenceNode([
     new CanISeeEnemyHero(),
     new InverterDecorator(new DoIHaveShield()),
-    new HasEnoughMana({ reserve: 50 }),
     new SheildMyself(),
 ]);
 
@@ -206,6 +205,11 @@ const taggerBehaviour = new SequenceNode([
     ]),
 ]);
 
+/*
+new CanISeeEnemyHero(),
+new InverterDecorator(new DoIHaveShield()),
+new SheildMyself(),
+*/
 const baseProtectorBehavior = new SequenceNode([
     new SetHeroRole({ role: HeroRole.BASE_PROTECTOR }),
     new HasAllowedMaximumNumberOfHeroesOfType({ role: HeroRole.BASE_PROTECTOR, maxAllowed: 1 }),
@@ -220,7 +224,7 @@ const baseProtectorBehavior = new SequenceNode([
                 new SequenceNode([
                     new HasEnoughMana({ reserve: 0 }),
                     new InverterDecorator(new IsTargetEntityShielded()),
-                    new IsTargetEntityExpectedToMoveIntoRangeOfMyBase({ range: MONSTER_BASE_DETECTION_THRESHOLD }),
+                    new IsTargetEntityWithinRangeOfMyBase({ distance: MONSTER_BASE_DETECTION_THRESHOLD }),
                     new IsTargetEntityWithinRangeOfHero({ distance: WIND_SPELL_CAST_RANGE }),
                     new PushTargetEntityAwayFromMyBase(),
                 ]),
