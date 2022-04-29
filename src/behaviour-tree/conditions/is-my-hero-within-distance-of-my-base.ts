@@ -1,10 +1,10 @@
 import { ChosenHeroCommands } from '../../commands';
-import { vector2DDistance } from '../../common';
-import { GameState } from '../../game-state';
+import { vector2DDistancePow } from '../../common';
+import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class IsTargetEntityWithinRangeOfHero extends LeafNode {
+export class IsMyHeroWithinDistanceOfMyBase extends LeafNode {
     readonly distance: number;
 
     constructor({ distance }: { distance: number }) {
@@ -22,11 +22,10 @@ export class IsTargetEntityWithinRangeOfHero extends LeafNode {
         localCache: LocalCache;
     }): boolean {
         const heroID = localCache.get<number>({ key: LocalCacheKey.MY_HERO_EVALUATING_BT });
-        const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
-        const distance = vector2DDistance({
-            v1: gameState.entityMap[heroID].position,
-            v2: gameState.entityMap[targetMonsterID].position,
+        const distanceFromEnemyBasePow = vector2DDistancePow({
+            v1: gameState.players[PlayerID.ME].baseCoordinates,
+            v2: gameState.entityMap[heroID].position,
         });
-        return distance <= this.distance;
+        return distanceFromEnemyBasePow <= Math.pow(this.distance, 2);
     }
 }

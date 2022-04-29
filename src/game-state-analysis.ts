@@ -8,7 +8,7 @@ import {
     vector2DMultiply,
     vector2DNormalize,
 } from './common';
-import { MONSTER_BASE_DETECTION_THRESHOLD, MONSTER_MAX_SPEED } from './config';
+import { BASE_AREA_RADIUS, MONSTER_MAX_SPEED } from './config';
 
 export enum PositionType {
     MY_BASE = 'MY_BASE',
@@ -112,20 +112,18 @@ const getNumOfTurnsItTakesForEntityToDamageBase = ({
     let numOfTicks = 0;
     let expectedPosition = { x: entity.position.x, y: entity.position.y };
     const currentDistanceFromBase = vector2DDistance({ v1: baseCoordinates, v2: expectedPosition });
-    let hasReachedBordersOfBase = currentDistanceFromBase <= MONSTER_BASE_DETECTION_THRESHOLD;
+    let hasReachedBordersOfBase = currentDistanceFromBase <= BASE_AREA_RADIUS;
     if (hasReachedBordersOfBase) {
         return Math.floor(currentDistanceFromBase / MONSTER_MAX_SPEED);
     }
     while (!hasReachedBordersOfBase) {
         expectedPosition = vector2DAdd({ v1: expectedPosition, v2: velocity });
         numOfTicks++;
-        if (vector2DDistance({ v1: baseCoordinates, v2: expectedPosition }) <= MONSTER_BASE_DETECTION_THRESHOLD) {
+        if (vector2DDistance({ v1: baseCoordinates, v2: expectedPosition }) <= BASE_AREA_RADIUS) {
             hasReachedBordersOfBase = true;
         }
     }
-    return Math.floor(
-        MONSTER_BASE_DETECTION_THRESHOLD / MONSTER_MAX_SPEED + (monsterTickSpeed * numOfTicks) / MONSTER_MAX_SPEED
-    );
+    return Math.floor(BASE_AREA_RADIUS / MONSTER_MAX_SPEED + (monsterTickSpeed * numOfTicks) / MONSTER_MAX_SPEED);
 };
 
 export const createGameStateAnalysis = ({ gameState }: { gameState: GameState }): GameStateAnalysis => {

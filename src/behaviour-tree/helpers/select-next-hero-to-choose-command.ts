@@ -1,5 +1,4 @@
 import { ChosenHeroCommands, CommandType } from '../../commands';
-import { EntityControlled } from '../../entity';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';

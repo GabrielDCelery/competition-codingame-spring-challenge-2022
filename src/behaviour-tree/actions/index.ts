@@ -9,3 +9,4 @@ export * from './shield-myself';
 export * from './wait';
 export * from './move-towards-enemy-base';
 export * from './move-towards-my-base';
+export * from './position-myself-between-my-base-and-target-position';

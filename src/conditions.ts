@@ -1,6 +1,6 @@
 import { ChosenHeroCommands, CommandType } from './commands';
 import { Vector2D, vector2DDistance, vector2DDistancePow } from './common';
-import { BASE_VISION_RANGE, MAP_HEIGHT, MAP_WIDTH, MONSTER_BASE_DETECTION_THRESHOLD } from './config';
+import { BASE_VISION_RADIUS, MAP_HEIGHT, MAP_WIDTH, BASE_AREA_RADIUS } from './config';
 import { Entity, EntityThreatFor, EntityType, MovingEntity } from './entity';
 import { GameState, PlayerID } from './game-state';
 
@@ -15,9 +15,9 @@ export const isMonsterThreateningMyBase = ({ entity }: { entity: Entity }): bool
 export const isEntitySeenByBase = ({ gameState, entity }: { gameState: GameState; entity: Entity }): boolean => {
     return (
         vector2DDistance({ v1: entity.position, v2: gameState.players[PlayerID.ME].baseCoordinates }) <=
-            BASE_VISION_RANGE ||
+            BASE_VISION_RADIUS ||
         vector2DDistance({ v1: entity.position, v2: gameState.players[PlayerID.OPPONENT].baseCoordinates }) <=
-            BASE_VISION_RANGE
+            BASE_VISION_RADIUS
     );
 };
 

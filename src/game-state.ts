@@ -1,6 +1,6 @@
 import { getEntityExpectedPosition, Vector2D, vector2DDistancePow, vector2DSubtract } from './common';
 import { isEntityWithinMapBoundaries, isEntitySeenByBase } from './conditions';
-import { BASE_VISION_RANGE, HERO_VISION_RANGE } from './config';
+import { BASE_VISION_RADIUS, HERO_VISION_RANGE } from './config';
 import { cloneEntity, Entity, EntityType } from './entity';
 
 export enum PlayerID {
@@ -124,7 +124,7 @@ export const createCompositeGameState = ({
             vector2DDistancePow({
                 v1: compositeGameState.players[PlayerID.ME].baseCoordinates,
                 v2: expectedPosition,
-            }) <= Math.pow(BASE_VISION_RANGE, 2);
+            }) <= Math.pow(BASE_VISION_RADIUS, 2);
 
         if (wasEntitySeenByMyBase) {
             return;

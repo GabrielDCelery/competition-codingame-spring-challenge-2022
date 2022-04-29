@@ -6,7 +6,7 @@ import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class FilterAlreadyTargetedEntities extends LeafNode {
+export class FilterOutAlreadyTargetedEntities extends LeafNode {
     protected _execute({
         gameState,
         chosenHeroCommands,
@@ -47,11 +47,6 @@ export class FilterAlreadyTargetedEntities extends LeafNode {
                     }
                     entitiesAlreadyBeingDealtWith[entity.id] = true;
                 });
-            }
-
-            if (chosenHeroCommand.type === CommandType.SPELL_CONTROL) {
-                entitiesAlreadyBeingDealtWith[chosenHeroCommand.target.id] = true;
-                return;
             }
         });
 

@@ -5,12 +5,12 @@ import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class TargetAreaThatIHaveLeastInformationAbout extends LeafNode {
-    readonly range: number;
+export class FilterDownToPositionsIKnowTheLeastAbout extends LeafNode {
+    readonly radius: number;
 
-    constructor({ range }: { range: number }) {
+    constructor({ radius }: { radius: number }) {
         super();
-        this.range = range;
+        this.radius = radius;
     }
 
     protected _execute({
@@ -24,11 +24,11 @@ export class TargetAreaThatIHaveLeastInformationAbout extends LeafNode {
     }): boolean {
         const targetPositions = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS });
         if (targetPositions.length === 0) {
-            return false;
+            return true;
         }
-        let chosenPosition = targetPositions[0];
-        let chosenPositionNumOfEntitiesWithin = Infinity;
-        const rangeThresholdPow = Math.pow(this.range, 2);
+        const positionMapByKnownEtities: { [index: number]: Vector2D[] } = {};
+
+        const rangeThresholdPow = Math.pow(this.radius, 2);
 
         targetPositions.forEach((targetPosition) => {
             let positionNumOfEntitiesWithin = 0;
@@ -47,15 +47,19 @@ export class TargetAreaThatIHaveLeastInformationAbout extends LeafNode {
                 positionNumOfEntitiesWithin += 1;
             });
 
-            if (positionNumOfEntitiesWithin > chosenPositionNumOfEntitiesWithin) {
-                return;
+            if (positionMapByKnownEtities[positionNumOfEntitiesWithin] === undefined) {
+                positionMapByKnownEtities[positionNumOfEntitiesWithin] = [];
             }
 
-            chosenPosition = targetPosition;
-            chosenPositionNumOfEntitiesWithin = positionNumOfEntitiesWithin;
+            positionMapByKnownEtities[positionNumOfEntitiesWithin].push(targetPosition);
         });
 
-        localCache.set<Vector2D>({ key: LocalCacheKey.TARGET_POSITION, value: chosenPosition });
+        localCache.set<Vector2D[]>({
+            key: LocalCacheKey.TARGET_POSITIONS,
+            value: positionMapByKnownEtities[
+                Math.min(...Object.keys(positionMapByKnownEtities).map((v) => parseInt(v)))
+            ],
+        });
         return true;
     }
 }

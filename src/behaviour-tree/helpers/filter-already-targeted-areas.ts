@@ -4,7 +4,7 @@ import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
-export class FilterOutAlreadyTargetedAreas extends LeafNode {
+export class FilterOutAlreadyTargetedPositions extends LeafNode {
     protected _execute({
         chosenHeroCommands,
         localCache,

@@ -32,7 +32,7 @@ export class PushTargetEntityAwayFromMyBase extends LeafNode {
         });
 
         chosenHeroCommands[heroID] = {
-            role: localCache.getOptional<HeroRole>({ key: LocalCacheKey.HERO_ROLE }) || HeroRole.GRUNT,
+            role: localCache.getOptional<HeroRole>({ key: LocalCacheKey.HERO_ROLE }) || HeroRole.WANDERER,
             type: CommandType.SPELL_WIND,
             source: gameState.entityMap[heroID],
             target: {

@@ -1,8 +1,10 @@
 import { EntityBase, MovingEntity } from './entity';
 
 export enum HeroRole {
+    GUARD = 'GUARD',
+    PATROL = 'PATROL',
     BASE_PROTECTOR = 'BASE_PROTECTOR',
-    GRUNT = 'GRUNT',
+    WANDERER = 'WANDERER',
     DEFENDER = 'DEFENDER',
     INTERCEPTOR = 'INTERCEPTOR',
     GATHERER = 'GATHERER',
