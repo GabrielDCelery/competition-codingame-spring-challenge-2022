@@ -12,7 +12,6 @@ export class FilterToAreasWithNoMonsters extends LeafNode {
         gameStateAnalysis,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;

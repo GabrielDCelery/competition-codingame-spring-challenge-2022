@@ -16,7 +16,6 @@ export class SetPositionsOfInterest extends LeafNode {
         gameStateAnalysis,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;

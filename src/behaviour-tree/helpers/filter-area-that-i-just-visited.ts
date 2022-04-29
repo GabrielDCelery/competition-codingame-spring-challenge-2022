@@ -7,16 +7,15 @@ import { getClosestPosition } from '../filters';
 
 export class FilterAreaThatIJustVisited extends LeafNode {
     protected _execute({
-        heroID,
         gameState,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
+        const heroID = localCache.get<number>({ key: LocalCacheKey.MY_HERO_EVALUATING_BT });
         let targetAreas = localCache.get<Vector2D[]>({ key: LocalCacheKey.TARGET_POSITIONS });
         const closestToHeroFilterPosition = getClosestPosition({
             sourceEntity: gameState.entityMap[heroID],

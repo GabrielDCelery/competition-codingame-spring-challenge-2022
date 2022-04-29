@@ -7,7 +7,6 @@ export class HasEnoughHeroesToCoverTargetEntities extends LeafNode {
     protected _execute({
         chosenHeroCommands,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;

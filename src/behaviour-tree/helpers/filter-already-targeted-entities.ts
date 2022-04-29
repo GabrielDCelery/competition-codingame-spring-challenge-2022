@@ -12,7 +12,6 @@ export class FilterAlreadyTargetedEntities extends LeafNode {
         chosenHeroCommands,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;

@@ -1,6 +1,5 @@
 import { ChosenHeroCommands } from '../../commands';
 import { vector2DAdd, vector2DDistancePow } from '../../common';
-import { MONSTER_BASE_DETECTION_THRESHOLD } from '../../config';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';

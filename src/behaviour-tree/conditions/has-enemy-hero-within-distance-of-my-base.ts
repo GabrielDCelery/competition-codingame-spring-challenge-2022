@@ -13,11 +13,9 @@ export class HasEnemyHeroWithinDistanceOfMyBase extends LeafNode {
     }
 
     protected _execute({
-        heroID,
         gameState,
         gameStateAnalysis,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;

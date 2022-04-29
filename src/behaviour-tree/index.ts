@@ -1,1 +1,1 @@
-export { heroAI } from './hero-ai';
+export { playerAI } from './hero-ai';

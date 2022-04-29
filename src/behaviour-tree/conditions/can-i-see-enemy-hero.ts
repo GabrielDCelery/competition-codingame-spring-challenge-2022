@@ -7,16 +7,16 @@ import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
 export class CanISeeEnemyHero extends LeafNode {
     protected _execute({
-        heroID,
         gameState,
         gameStateAnalysis,
+        localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
+        const heroID = localCache.get<number>({ key: LocalCacheKey.MY_HERO_EVALUATING_BT });
         for (let i = 0, iMax = gameStateAnalysis.players[PlayerID.OPPONENT].heroIDs.length; i < iMax; i++) {
             const enemyHeroID = gameStateAnalysis.players[PlayerID.OPPONENT].heroIDs[i];
             const canISee =

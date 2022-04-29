@@ -3,21 +3,19 @@ import { GameState } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
 import { DecoratorNode, LocalCache } from '../bt-engine';
 
-export class InverterNode extends DecoratorNode {
+export class InverterDecorator extends DecoratorNode {
     protected _execute({
-        heroID,
         gameState,
         gameStateAnalysis,
         chosenHeroCommands,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        const result = this.node.execute({ heroID, gameState, gameStateAnalysis, chosenHeroCommands, localCache });
+        const result = this.node.execute({ gameState, gameStateAnalysis, chosenHeroCommands, localCache });
         return !result;
     }
 }

@@ -7,18 +7,17 @@ import { getMyOtherAvailableHeroIDs } from '../filters';
 
 export class AmIClosestToTargetEntity extends LeafNode {
     protected _execute({
-        heroID,
         gameState,
         gameStateAnalysis,
         chosenHeroCommands,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
+        const heroID = localCache.get<number>({ key: LocalCacheKey.MY_HERO_EVALUATING_BT });
         const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
         const otherHeroIDs = getMyOtherAvailableHeroIDs({ heroID, gameStateAnalysis, chosenHeroCommands });
         const amIClosest = isClosestPosition({

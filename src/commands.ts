@@ -51,7 +51,7 @@ export const generateHeroCommands = ({
     const chosenHeroCommands: ChosenHeroCommands = {};
     while (keepRunningAI) {
         gameStateAnalysis.players[PlayerID.ME].heroIDs.forEach((heroID) => {
-            return heroAI.execute({
+            return playerAI.execute({
                 heroID,
                 gameState,
                 gameStateAnalysis,

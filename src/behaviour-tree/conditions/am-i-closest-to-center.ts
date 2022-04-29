@@ -3,22 +3,22 @@ import { isClosestPosition } from '../../conditions';
 import { MAP_HEIGHT, MAP_WIDTH } from '../../config';
 import { GameState, PlayerID } from '../../game-state';
 import { GameStateAnalysis } from '../../game-state-analysis';
-import { LeafNode, LocalCache } from '../bt-engine';
+import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 import { getMyOtherAvailableHeroIDs } from '../filters';
 
 export class AmIClosestToCenter extends LeafNode {
     protected _execute({
-        heroID,
         gameState,
         gameStateAnalysis,
         chosenHeroCommands,
+        localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
+        const heroID = localCache.get<number>({ key: LocalCacheKey.MY_HERO_EVALUATING_BT });
         const otherHeroIDs = getMyOtherAvailableHeroIDs({ heroID, gameStateAnalysis, chosenHeroCommands });
         const amIClosest = isClosestPosition({
             sourcePosition: gameState.entityMap[heroID].position,

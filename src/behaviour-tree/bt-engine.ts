@@ -12,7 +12,6 @@ export abstract class CompositeNode {
     }
 
     protected _execute({}: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
@@ -22,19 +21,17 @@ export abstract class CompositeNode {
     }
 
     execute({
-        heroID,
         gameState,
         gameStateAnalysis,
         chosenHeroCommands,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        return this._execute({ heroID, gameState, gameStateAnalysis, chosenHeroCommands, localCache });
+        return this._execute({ gameState, gameStateAnalysis, chosenHeroCommands, localCache });
     }
 }
 
@@ -46,7 +43,6 @@ export abstract class DecoratorNode {
     }
 
     protected _execute({}: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
@@ -56,25 +52,22 @@ export abstract class DecoratorNode {
     }
 
     execute({
-        heroID,
         gameState,
         gameStateAnalysis,
         chosenHeroCommands,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        return this._execute({ heroID, gameState, gameStateAnalysis, chosenHeroCommands, localCache });
+        return this._execute({ gameState, gameStateAnalysis, chosenHeroCommands, localCache });
     }
 }
 
 export abstract class LeafNode {
     protected _execute({}: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
@@ -84,31 +77,27 @@ export abstract class LeafNode {
     }
 
     execute({
-        heroID,
         gameState,
         gameStateAnalysis,
         chosenHeroCommands,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
-        return this._execute({ heroID, gameState, gameStateAnalysis, chosenHeroCommands, localCache });
+        return this._execute({ gameState, gameStateAnalysis, chosenHeroCommands, localCache });
     }
 }
 
 export class SequenceNode extends CompositeNode {
     _execute({
-        heroID,
         gameState,
         gameStateAnalysis,
         chosenHeroCommands,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
@@ -116,7 +105,6 @@ export class SequenceNode extends CompositeNode {
     }): boolean {
         for (let i = 0, iMax = this.nodes.length; i < iMax; i++) {
             const result = this.nodes[i].execute({
-                heroID,
                 gameState,
                 gameStateAnalysis,
                 chosenHeroCommands,
@@ -132,13 +120,11 @@ export class SequenceNode extends CompositeNode {
 
 export class SelectNode extends CompositeNode {
     _execute({
-        heroID,
         gameState,
         gameStateAnalysis,
         chosenHeroCommands,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
@@ -146,7 +132,6 @@ export class SelectNode extends CompositeNode {
     }): boolean {
         for (let i = 0, iMax = this.nodes.length; i < iMax; i++) {
             const result = this.nodes[i].execute({
-                heroID,
                 gameState,
                 gameStateAnalysis,
                 chosenHeroCommands,
@@ -161,6 +146,7 @@ export class SelectNode extends CompositeNode {
 }
 
 export enum LocalCacheKey {
+    MY_HERO_EVALUATING_BT = 'MY_HERO_EVALUATING_BT',
     HERO_ROLE = 'HERO_ROLE',
     TARGET_ENTITY_IDS = 'TARGET_ENTITY_IDS',
     TARGET_ENTITY_ID = 'TARGET_ENTITY_ID',
@@ -218,19 +204,16 @@ export class BehaviourTree {
     }
 
     execute({
-        heroID,
         gameState,
         gameStateAnalysis,
         chosenHeroCommands,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
     }) {
         this.localCache.clearCache();
         this.rootNode.execute({
-            heroID,
             gameState,
             gameStateAnalysis,
             chosenHeroCommands,

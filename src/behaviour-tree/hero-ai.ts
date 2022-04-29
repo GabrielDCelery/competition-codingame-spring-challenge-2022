@@ -27,7 +27,7 @@ import {
     SheildMyself,
     Wait,
 } from './actions';
-import { BehaviourTree, SelectNode, SequenceNode } from './bt-engine';
+import { BehaviourTree, LocalCacheKey, SelectNode, SequenceNode } from './bt-engine';
 import {
     IsTargetEntityWithinRangeOfHero,
     IsTargetEntityShielded,
@@ -35,7 +35,6 @@ import {
     DoIHaveShield,
     // HasEnoughHeroesAssumingRole,
     HasEnoughMana,
-    HaveIAlreadyChosenCommand,
     IsTargetEntityExpectedToMoveIntoRangeOfMyBase,
     // TargetAreaClosestToMe,
     TargetEntityClosestToMyBase,
@@ -50,11 +49,12 @@ import {
     AmIClosestToEnemyBase,
     AmIClosestToCenter,
     HasAllowedNumberOfHeroesOfType,
+    HasHeroPendingToBeAssignedACommand,
 } from './conditions';
 import { AmIClosestToTargetArea } from './conditions/am-i-closest-to-target-area';
 import { HasEnemyHeroWithinDistanceOfMyBase } from './conditions/has-enemy-hero-within-distance-of-my-base';
 import { IsTargetEntityWithinRangeOfMyBase } from './conditions/is-target-entity-within-range-of-my-base';
-import { InverterNode } from './decorators';
+import { InverterDecorator, RepeaterDecorator } from './decorators';
 import { ErrorCatcherNode } from './decorators/error-catcher';
 import {
     ClearLocalCache,
@@ -67,9 +67,11 @@ import {
     FilterAreaThatIJustVisited,
     SetHeroRole,
     GetMonsters,
+    ClearLocalCacheAtKeys,
 } from './helpers';
 import { FilterAlreadyTargetedEntities } from './helpers/filter-already-targeted-entities';
 import { GetEnemyHeroesNearMyBase } from './helpers/get-enemy-heroes-near-my-base';
+import { SelectNextHeroThatNeedsCommandBeingAssigned } from './helpers/select-next-hero-to-choose-command';
 
 const defendBaseFromMonstersBehaviour = new SequenceNode([
     new HasExpectedMinimumNumberOfHeroesOfType({ role: HeroRole.DEFENDER, minExpected: 0 }),
@@ -80,20 +82,20 @@ const defendBaseFromMonstersBehaviour = new SequenceNode([
     new FilterAlreadyTargetedEntities(),
     new TargetEntityClosestToMyBase(),
     new SelectNode([
-        new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
+        new SequenceNode([new InverterDecorator(new AmIClosestToTargetEntity()), new Pause()]),
         new SequenceNode([
             new HasEnoughMana({ reserve: 0 }),
-            new InverterNode(new IsTargetEntityShielded()),
+            new InverterDecorator(new IsTargetEntityShielded()),
             new IsTargetEntityExpectedToMoveIntoRangeOfMyBase({ range: MONSTER_BASE_DETECTION_THRESHOLD }),
             new IsTargetEntityWithinRangeOfHero({ distance: WIND_SPELL_CAST_RANGE }),
             new PushTargetEntityAwayFromMyBase(),
         ]),
         new SequenceNode([
             new HasEnoughMana({ reserve: 0 }),
-            new InverterNode(new IsTargetEntityShielded()),
-            new InverterNode(new IsTargetEntityControlled()),
-            new InverterNode(new HasEnemyHeroWithinDistanceOfMyBase({ distance: 7000 })),
-            new InverterNode(
+            new InverterDecorator(new IsTargetEntityShielded()),
+            new InverterDecorator(new IsTargetEntityControlled()),
+            new InverterDecorator(new HasEnemyHeroWithinDistanceOfMyBase({ distance: 7000 })),
+            new InverterDecorator(
                 new IsTargetEntityExpectedToMoveIntoRangeOfMyBase({ range: MONSTER_BASE_DETECTION_THRESHOLD })
             ),
             new IsTargetEntityWithinRangeOfMyBase({ distance: NEAR_BASE_THRESHOLD }),
@@ -111,7 +113,7 @@ const farmBehaviour = new SequenceNode([
     //new TargetEntityClosestToMyBase(),
     new TargetEntityClosestToMyHero(),
     new SelectNode([
-        new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
+        new SequenceNode([new InverterDecorator(new AmIClosestToTargetEntity()), new Pause()]),
         new InterceptTargetEntity(),
     ]),
 ]);
@@ -121,7 +123,10 @@ const patrolBehaviour = new SequenceNode([
     new FilterOutAlreadyTargetedAreas(),
     new TargetAreaThatIHaveLeastInformation({ range: AREA_RADIUS }),
     // new TargetPositionThatIsLeastCovered(),
-    new SelectNode([new SequenceNode([new InverterNode(new AmIClosestToTargetArea()), new Pause()]), new MoveToArea()]),
+    new SelectNode([
+        new SequenceNode([new InverterDecorator(new AmIClosestToTargetArea()), new Pause()]),
+        new MoveToArea(),
+    ]),
 ]);
 /*
 const patrolBehaviourV2 = new SequenceNode([
@@ -130,18 +135,18 @@ const patrolBehaviourV2 = new SequenceNode([
     new FilterToAreasWithNoMonsters(),
     new FilterAreaThatIJustVisited(),
     new TargetAreaClosestToMe(),
-    new SelectNode([new SequenceNode([new InverterNode(new AmIClosestToTargetArea()), new Pause()]), new MoveToArea()]),
+    new SelectNode([new SequenceNode([new InverterDecorator(new AmIClosestToTargetArea()), new Pause()]), new MoveToArea()]),
 ]);
 */
 const shieldMyselfBehaviour = new SequenceNode([
     new CanISeeEnemyHero(),
-    new InverterNode(new DoIHaveShield()),
+    new InverterDecorator(new DoIHaveShield()),
     new HasEnoughMana({ reserve: 50 }),
     new SheildMyself(),
 ]);
 
 const interceptEnemyHeroBehaviour = new SequenceNode([
-    new InverterNode(
+    new InverterDecorator(
         new HasAllowedMaximumNumberOfHeroesOfType({
             role: HeroRole.INTERCEPTOR,
             maxAllowed: MAX_ALLOWED_NUM_OF_INTERCEPTORS,
@@ -153,18 +158,18 @@ const interceptEnemyHeroBehaviour = new SequenceNode([
     new FilterAlreadyTargetedEntities(),
     new TargetEntityClosestToMyBase(),
     new SelectNode([
-        new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
+        new SequenceNode([new InverterDecorator(new AmIClosestToTargetEntity()), new Pause()]),
         new SequenceNode([
             new HasEnoughMana({ reserve: 0 }),
-            new InverterNode(new IsTargetEntityShielded()),
+            new InverterDecorator(new IsTargetEntityShielded()),
             new IsTargetEntityWithinRangeOfHero({ distance: WIND_SPELL_CAST_RANGE }),
             new PushTargetEntityAwayFromMyBase(),
         ]),
         new SequenceNode([
             new HasEnoughMana({ reserve: 0 }),
-            new InverterNode(new IsTargetEntityShielded()),
+            new InverterDecorator(new IsTargetEntityShielded()),
             new IsTargetEntityWithinRangeOfHero({ distance: CONTROL_SPELL_CAST_RANGE }),
-            new InverterNode(new IsTargetEntityWithinRangeOfHero({ distance: WIND_SPELL_CAST_RANGE })),
+            new InverterDecorator(new IsTargetEntityWithinRangeOfHero({ distance: WIND_SPELL_CAST_RANGE })),
             new DirectEntityAwayFromMyBase({ entityType: EntityType.OPPONENT_HERO, entitySpeed: HERO_MAX_SPEED }),
         ]),
         new InterceptTargetEnemyHero(),
@@ -172,11 +177,11 @@ const interceptEnemyHeroBehaviour = new SequenceNode([
 ]);
 
 const gathererBehaviour = new SequenceNode([
-    new InverterNode(new HasExpectedMinimumNumberOfHeroesOfType({ role: HeroRole.GATHERER, minExpected: 1 })),
-    new InverterNode(new HasAllowedMaximumNumberOfHeroesOfType({ role: HeroRole.GATHERER, maxAllowed: 1 })),
+    new InverterDecorator(new HasExpectedMinimumNumberOfHeroesOfType({ role: HeroRole.GATHERER, minExpected: 1 })),
+    new InverterDecorator(new HasAllowedMaximumNumberOfHeroesOfType({ role: HeroRole.GATHERER, maxAllowed: 1 })),
     new SetHeroRole({ role: HeroRole.GATHERER }),
     new SelectNode([
-        new SequenceNode([new InverterNode(new AmIClosestToCenter()), new Pause()]),
+        new SequenceNode([new InverterDecorator(new AmIClosestToCenter()), new Pause()]),
         new SequenceNode([new GetWanderingMonsters(), new TargetEntityClosestToMyHero(), new InterceptTargetEntity()]),
         new SequenceNode([
             new SetPositionsOfInterest({ positionTypes: [PositionType.OUTER_PATROL_AREA] }),
@@ -196,7 +201,7 @@ const taggerBehaviour = new SequenceNode([
     new FilterAlreadyTargetedEntities(),
     new TargetEntityClosestToMyBase(),
     new SelectNode([
-        new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
+        new SequenceNode([new InverterDecorator(new AmIClosestToTargetEntity()), new Pause()]),
         new InterceptTargetEnemyHero(),
     ]),
 ]);
@@ -211,10 +216,10 @@ const baseProtectorBehavior = new SequenceNode([
             new FilterAlreadyTargetedEntities(),
             new TargetEntityClosestToMyBase(),
             new SelectNode([
-                new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
+                new SequenceNode([new InverterDecorator(new AmIClosestToTargetEntity()), new Pause()]),
                 new SequenceNode([
                     new HasEnoughMana({ reserve: 0 }),
-                    new InverterNode(new IsTargetEntityShielded()),
+                    new InverterDecorator(new IsTargetEntityShielded()),
                     new IsTargetEntityExpectedToMoveIntoRangeOfMyBase({ range: MONSTER_BASE_DETECTION_THRESHOLD }),
                     new IsTargetEntityWithinRangeOfHero({ distance: WIND_SPELL_CAST_RANGE }),
                     new PushTargetEntityAwayFromMyBase(),
@@ -228,28 +233,42 @@ const baseProtectorBehavior = new SequenceNode([
             new FilterAlreadyTargetedEntities(),
             new TargetEntityClosestToMyBase(),
             new SelectNode([
-                new SequenceNode([new InverterNode(new AmIClosestToTargetEntity()), new Pause()]),
+                new SequenceNode([new InverterDecorator(new AmIClosestToTargetEntity()), new Pause()]),
                 new InterceptTargetEnemyHero(),
             ]),
         ]),
     ]),
 ]);
 
-const heroAI = new BehaviourTree(
-    new SelectNode([
-        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), new HaveIAlreadyChosenCommand()])),
+const clearCacheForRoleSelection = new ClearLocalCacheAtKeys({
+    keys: [
+        LocalCacheKey.HERO_ROLE,
+        LocalCacheKey.TARGET_ENTITY_ID,
+        LocalCacheKey.TARGET_ENTITY_IDS,
+        LocalCacheKey.TARGET_POSITION,
+        LocalCacheKey.TARGET_POSITIONS,
+    ],
+});
 
-        //   new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), shieldMyselfBehaviour])),
-        //  new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), gathererBehaviour])),
-        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), baseProtectorBehavior])),
-        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), defendBaseFromMonstersBehaviour])),
-        //   new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), taggerBehaviour])),
+const playerAI = new BehaviourTree(
+    new RepeaterDecorator(
+        new SequenceNode([
+            new ClearLocalCacheAtKeys({ keys: [LocalCacheKey.MY_HERO_EVALUATING_BT] }),
+            new SelectNextHeroThatNeedsCommandBeingAssigned(),
+            new SelectNode([
+                //  new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), shieldMyselfBehaviour])),
+                //  new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), gathererBehaviour])),
+                new ErrorCatcherNode(new SequenceNode([clearCacheForRoleSelection, baseProtectorBehavior])),
+                new ErrorCatcherNode(new SequenceNode([clearCacheForRoleSelection, defendBaseFromMonstersBehaviour])),
+                // new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), taggerBehaviour])),
 
-        //    new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), interceptEnemyHeroBehaviour])),
-        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), farmBehaviour])),
-        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), patrolBehaviour])),
-        new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), new Wait()])),
-    ])
+                //  new ErrorCatcherNode(new SequenceNode([new ClearLocalCache(), interceptEnemyHeroBehaviour])),
+                new ErrorCatcherNode(new SequenceNode([clearCacheForRoleSelection, farmBehaviour])),
+                new ErrorCatcherNode(new SequenceNode([clearCacheForRoleSelection, patrolBehaviour])),
+                new ErrorCatcherNode(new SequenceNode([clearCacheForRoleSelection, new Wait()])),
+            ]),
+        ])
+    )
 );
 
-export { heroAI };
+export { playerAI };

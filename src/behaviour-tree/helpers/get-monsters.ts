@@ -9,7 +9,6 @@ export class GetMonsters extends LeafNode {
         gameState,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;

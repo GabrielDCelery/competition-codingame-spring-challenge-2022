@@ -16,7 +16,6 @@ export class HasEnoughMana extends LeafNode {
         gameState,
         chosenHeroCommands,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;

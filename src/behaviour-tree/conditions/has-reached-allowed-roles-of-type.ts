@@ -16,7 +16,6 @@ export class HasAllowedNumberOfHeroesOfType extends LeafNode {
     protected _execute({
         chosenHeroCommands,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;

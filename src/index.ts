@@ -3,7 +3,7 @@ import * as GSA from './game-state-analysis';
 import { Entity, getMaxSpeedOfEntity } from './entity';
 import { MAP_HEIGHT, MAP_WIDTH } from './config';
 import { pursuitTargetEntityNextPosition } from './common';
-import { heroAI } from './behaviour-tree';
+import { playerAI } from './behaviour-tree';
 import { ChosenHeroCommands, CommandType } from './commands';
 import { haveAllMyHeroesBeenAsignedCommands } from './conditions';
 
@@ -81,19 +81,7 @@ try {
 
         const chosenHeroCommands: ChosenHeroCommands = {};
 
-        let keepRunningAI = true;
-
-        while (keepRunningAI) {
-            gameStateAnalysis.players[GS.PlayerID.ME].heroIDs.forEach((heroID) => {
-                heroAI.execute({
-                    heroID,
-                    gameState: compositeGameState,
-                    gameStateAnalysis,
-                    chosenHeroCommands,
-                });
-            });
-            keepRunningAI = !haveAllMyHeroesBeenAsignedCommands({ gameState: compositeGameState, chosenHeroCommands });
-        }
+        playerAI.execute({ gameState: compositeGameState, gameStateAnalysis, chosenHeroCommands });
 
         const commands = Object.values(chosenHeroCommands).map((chosenCommand) => {
             const { type, source, target, role } = chosenCommand;

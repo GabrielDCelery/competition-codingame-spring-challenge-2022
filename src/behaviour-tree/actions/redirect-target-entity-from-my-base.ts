@@ -16,17 +16,16 @@ import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
 export class RedirectTargetEntityFromMyBase extends LeafNode {
     protected _execute({
-        heroID,
         gameState,
         chosenHeroCommands,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
+        const heroID = localCache.get<number>({ key: LocalCacheKey.MY_HERO_EVALUATING_BT });
         const targetMonsterID = localCache.get<number>({ key: LocalCacheKey.TARGET_ENTITY_ID });
 
         const expectedPosition = vector2DAdd({

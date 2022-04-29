@@ -6,16 +6,15 @@ import { getClosestEntityID } from '../filters';
 
 export class TargetEntityClosestToMyHero extends LeafNode {
     protected _execute({
-        heroID,
         gameState,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
+        const heroID = localCache.get<number>({ key: LocalCacheKey.MY_HERO_EVALUATING_BT });
         const targetMonsterIDs = localCache.get<number[]>({ key: LocalCacheKey.TARGET_ENTITY_IDS });
         if (targetMonsterIDs.length === 0) {
             return false;

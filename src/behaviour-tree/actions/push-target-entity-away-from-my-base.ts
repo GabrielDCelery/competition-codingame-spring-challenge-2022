@@ -8,17 +8,16 @@ import { LeafNode, LocalCache, LocalCacheKey } from '../bt-engine';
 
 export class PushTargetEntityAwayFromMyBase extends LeafNode {
     protected _execute({
-        heroID,
         gameState,
         chosenHeroCommands,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
         localCache: LocalCache;
     }): boolean {
+        const heroID = localCache.get<number>({ key: LocalCacheKey.MY_HERO_EVALUATING_BT });
         const pushTowardsLocation = vector2DAdd({
             v1: gameState.entityMap[heroID].position,
             v2: vector2DMultiply({

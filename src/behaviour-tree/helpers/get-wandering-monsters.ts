@@ -8,7 +8,6 @@ export class GetWanderingMonsters extends LeafNode {
         gameStateAnalysis,
         localCache,
     }: {
-        heroID: number;
         gameState: GameState;
         gameStateAnalysis: GameStateAnalysis;
         chosenHeroCommands: ChosenHeroCommands;
